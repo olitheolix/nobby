@@ -1,0 +1,15 @@
+/* Compile with 
+  dot -Tsvg doc/source/graph_ex1.gv -o doc/source/images/graph_ex1.svg
+*/
+digraph G {
+"Root (Entire Text)" -> "Macro(rule)";
+"Root (Entire Text)" -> "Text('\\n')";
+"Root (Entire Text)" -> "Env(itemize)";
+"Root (Entire Text)" -> "Text('\\nThe end.')";
+"Macro(rule)" -> "Text(1cm)";
+"Macro(rule)" -> "Text(2cm)";
+"Env(itemize)" -> "Macro(item)";
+"Env(itemize)" -> "Text('A')";
+"Env(itemize)" -> "Macro(item) ";
+"Env(itemize)" -> "Eqn('x=1')";
+}

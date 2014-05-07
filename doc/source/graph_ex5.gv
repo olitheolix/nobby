@@ -1,0 +1,9 @@
+/* Compile with 
+  dot -Tsvg doc/source/graph_ex1.gv -o doc/source/images/graph_ex1.svg
+*/
+digraph G {
+"Root" -> "Text('<ul>')";
+"Root" -> "Macro(item)";
+"Root" -> "Text(' A')";
+"Root" -> "Text('</ul>')";
+}

@@ -1,0 +1,10 @@
+/* Compile with 
+  dot -Tsvg doc/source/graph_ex1.gv -o doc/source/images/graph_ex1.svg
+*/
+digraph G {
+"Root" -> "Text('foo ')";
+"Root" -> "Text('<em>')";
+"Root" -> "Text('important')";
+"Root" -> "Text('</em>')";
+"Root" -> "Text(' bar')";
+}
