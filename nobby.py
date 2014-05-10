@@ -1436,10 +1436,18 @@ def compileFragmentToImage(arg_tuple):
 
     # Convenience.
     tex, frag_name = frag['tex'], frag['placeholder']
+    
+    # Create the document preamble. It consists of the original preamble plus
+    # some special options that Nobby requires.
+    tmp_tw = '\\addtolength{{\\textwidth}}{{{0:0.2f}cm}}'
+    tmp_tw = tmp_tw.format(config.textwidth_addon)
     preamble += ('\n'
                  '\\pagestyle{empty}\n'
-                 '\\addtolength{\paperwidth}{100cm}\n'
-                 '\\addtolength{\paperheight}{100cm}\n')
+                 '\\addtolength{\\paperwidth}{20cm}\n'
+                 '\\addtolength{\\paperheight}{20cm}\n'
+                 + tmp_tw
+        )
+    del tmp_tw
 
     # Ensure the target- directory exists.
     try:
@@ -1538,7 +1546,7 @@ def compileFragmentToImage(arg_tuple):
 
         # Replace the SVG file with a PNG image, if the former is too large.
         if os.stat(fname_svg).st_size > config.max_svg_size:
-            subprocess.check_output(('convert', '-density', '200',
+            subprocess.check_output(('convert', '-density', '120',
                                      fname_crop, fname_alt))
 
             # Only retain the PNG if it is really smaller than the SVG.
@@ -1902,6 +1910,9 @@ def parseCmdline():
          help='Rebuild all fragments images.')
     padd('--scale', '-s', type=float, metavar='S', default=config.pdf_scale,
          help='Scale all images by a factor of "S" (a float, S>0).')
+    padd('--textwidth', type=float, metavar='W',
+         default=config.textwidth_addon,
+         help='Add \\addtolength{\\textwidth}{Wcm} to preamble')
     padd('--max-svg-size', metavar='Bytes', type=int,
          default=config.max_svg_size,
          help='Maximum size of SVG before it gets replaced with PNG')
@@ -1927,6 +1938,7 @@ def parseCmdline():
     # Add the command line options to the global ``config`` module.
     config.skip_existing_fragments = not args.rebuild
     config.pdf_scale = args.scale
+    config.textwidth_addon = args.textwidth
     config.max_svg_size = args.max_svg_size
     config.show_unconverted_envs = not args.no_env_warning
     config.keep_builddir = args.keep_build_dir

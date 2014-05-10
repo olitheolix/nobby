@@ -35,6 +35,16 @@ placeholder_prefix = 'nobby'
 # Scale all PDF images by this factor (1.0 means no scaling).
 pdf_scale = 1.3
 
+# Change the following parameter to align the created image size with the width
+# of the HTML page.  The following value will be added to to LaTeX \textwidth
+# length in every fragment. The purpose of this parameter is to align the line
+# width of the LaTeX document with the line width of the HTML document. For
+# equations this is rarely a problem, but other commands that scale their
+# content relative to \textwidth it can be A typical example is the
+# 'includegraphics' command, eg. '\includegraphics[width=0.5\textwidth]'. The
+# absolute image size of the created SVG image now depends on \textwidth.
+textwidth_addon = 0
+
 # Number of worker processes to compile fragments.
 num_processes = 20
 
