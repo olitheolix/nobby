@@ -570,7 +570,7 @@ def test_convertTreeToHTML_macro_noplugin():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert html == '|fbox-0|b '
     assert len(frags) == 1
     assert frags[0]['tex'] == r'\fbox{a}'
@@ -580,7 +580,7 @@ def test_convertTreeToHTML_macro_noplugin():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert html == '|curly2_-0|'
     assert len(frags) == 1
     assert frags[0]['tex'] == r'{{\textnormal{norma tex}}}'
@@ -596,7 +596,7 @@ def test_convertTreeToHTML_macro_noplugin_rectbracket():
     assert root.kids[1].type == 'text'
 
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert html == '|ldots-0|[a]b '
     assert len(frags) == 1
     assert frags[0]['tex'] == r'\ldots'
@@ -606,7 +606,7 @@ def test_convertTreeToHTML_macro_noplugin_rectbracket():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert html == '|hyperref-0|c'
     assert len(frags) == 1
     assert frags[0]['tex'] == r'\hyperref[a]{b}'
@@ -619,7 +619,7 @@ def test_convertTreeToHTML_1():
     root = buildTree(body, delim_list)
     frags = []
 
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert html == body
     assert len(frags) == 0
 
@@ -630,7 +630,7 @@ def test_convertTreeToHTML_1():
     assert root.kids[0].type == '$'
 
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert len(frags) == 1
     assert html == '|dollar1_-0|'
 
@@ -639,7 +639,7 @@ def test_convertTreeToHTML_1():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert len(frags) == 1
     assert html == 'foo |dollar1_-0|'
 
@@ -648,7 +648,7 @@ def test_convertTreeToHTML_1():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert len(frags) == 1
     assert html == 'foo |dollar1_-0|'
 
@@ -657,7 +657,7 @@ def test_convertTreeToHTML_1():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert len(frags) == 1
     assert html == 'foo |curly2_-0|'
 
@@ -666,7 +666,7 @@ def test_convertTreeToHTML_1():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags)
+    html = convertTreeToHTML(root, frags, [], {})
     assert len(frags) == 2
     assert html == 'foo |curly2_-0| <p>|blah-1|<p>'
 
@@ -680,7 +680,7 @@ def test_convertTreeToHTML_plugin_env():
     delim_list = pruneDelimiters(delim_list, ['itemize'])
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags, {'itemize': c_itemize})
+    html = convertTreeToHTML(root, frags, [], {'itemize': c_itemize})
     assert len(frags) == 0
     assert html == '<ul>foo</ul>'
 
@@ -689,7 +689,7 @@ def test_convertTreeToHTML_plugin_env():
     delim_list = pruneDelimiters(delim_list, ['itemize'])
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags, {'itemize': c_itemize})
+    html = convertTreeToHTML(root, frags, [], {'itemize': c_itemize})
     assert len(frags) == 1
     assert html == '<ul>foo |dollar1_-0|</ul>'
 
@@ -708,7 +708,7 @@ def test_convertTreeToHTML_plugin_env_bug1():
     root = buildTree(body, delim_list)
 
     frags = []
-    html = convertTreeToHTML(root, frags, {'ldots': c_ldots})
+    html = convertTreeToHTML(root, frags, [], {'ldots': c_ldots})
     assert len(frags) == 0
     assert html == 'foo...'
 
@@ -727,7 +727,7 @@ def test_convertTreeToHTML_plugin_macro():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags, {'ldots': c_ldots})
+    html = convertTreeToHTML(root, frags, [], {'ldots': c_ldots})
     assert len(frags) == 0
     assert html == 'foo... '
 
@@ -736,7 +736,7 @@ def test_convertTreeToHTML_plugin_macro():
     delim_list = pruneDelimiters(delim_list)
     root = buildTree(body, delim_list)
     frags = []
-    html = convertTreeToHTML(root, frags, {'fbox': c_fbox})
+    html = convertTreeToHTML(root, frags, [], {'fbox': c_fbox})
     assert len(frags) == 0
     assert html == 'foo fbox[bar] '
 

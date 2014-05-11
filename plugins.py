@@ -15,6 +15,7 @@
 # Nobby. If not, see <http://www.gnu.org/licenses/>.
 
 import re
+import config
 import IPython
 
 ipshell = IPython.embed
@@ -105,6 +106,22 @@ def href(nodes):
     return ret
 
 
+def ref(nodes):
+    """
+    Parse the .aux content for the corresponding label and return it.
+    """
+    assert len(nodes) > 0
+    label_name = nodes[0].body
+    p = re.compile(r'\\newlabel{' + label_name + r'}{{(.*?)}{(.*?)}')
+    m = p.search(config.tex_output.aux)
+    if m is None:
+        return nodes
+    else:
+        label_number = m.groups()[0]
+        tag = '<a href="#{}">{}</a>'.format(label_name, label_number)
+        return tag, nodes[1:]
+
+
 def emph(nodes):
     ret = '<em>', nodes, '</em>'
     return ret
@@ -166,6 +183,7 @@ plugins = {
     'comment_': comment,
     'label': label,
     'hyperref': hyperref,
+    'ref': ref,
     'href': href,
     'emph': emph,
     'ldots': ldots,

@@ -879,7 +879,7 @@ def convertTextToHTML(body):
     return body
 
 
-def convertTreeToHTML(node, frag_list, plugins=None):
+def convertTreeToHTML(node, frag_list, counters, plugins):
     """
     Convert a LaTeX tree into a HTML file and return the fragments.
 
@@ -910,10 +910,6 @@ def convertTreeToHTML(node, frag_list, plugins=None):
         return ''
     else:
         html = ''
-
-    # Convert default argument to a valid (empty) plugin dictionary.
-    if plugins is None:
-        plugins = {}
 
     # Traverse all child nodes. Do not use a for-loop because the number of
     # elements in this list may change during the loop, depending on how many
@@ -981,15 +977,17 @@ def convertTreeToHTML(node, frag_list, plugins=None):
                 # It is indeed a single brace environment inside another single
                 # brace environment, which means the two nodes can be merged
                 # into a single double brace environment.
+                child.type = '{{'
                 tmp = TreeNode(node, '{{')
                 tmp.body = child.kids[0].body
+                tmp.span = child.span
 
                 # Double brace environments become fragments by definition.
-                html += createFragmentDescriptor(tmp, frag_list)
+                html += createFragmentDescriptor(tmp, frag_list, counters)
                 del tmp
             else:
                 # A single curly brace environment: descend.
-                html += convertTreeToHTML(child, frag_list, plugins)
+                html += convertTreeToHTML(child, frag_list, counters, plugins)
 
             # Continue with next child, regardless of whether it was a single-
             # or double braced environment.
@@ -1042,7 +1040,7 @@ def convertTreeToHTML(node, frag_list, plugins=None):
 
             # Create a new fragment descriptor based on the node body. The
             # function will return the necessary HTML code to load the image.
-            html += createFragmentDescriptor(child, frag_list)
+            html += createFragmentDescriptor(child, frag_list, counters)
 
             # Close the anchor tags.
             html += '</a>' * num_labels
@@ -1117,7 +1115,7 @@ def runPlugin(func, kids, parent):
     return out
 
 
-def createFragmentDescriptor(child, frag_list):
+def createFragmentDescriptor(child, frag_list, counters):
     """
     Add fragment for ``child`` to ``frag_list`` and return HTML <img> tag.
 
@@ -1146,10 +1144,9 @@ def createFragmentDescriptor(child, frag_list):
     tag = tag.format(ph)
 
     # In the HTML code, place the image in a new paragraph if its source code
-    # constitutes an environment (ie. something that within a \begin \end block
-    # in LaTeX). All other types, eg. macros and double brace environments, do
-    # not receive special treatment to facilitate eg. inline equations in the
-    # HTML output.
+    # constitutes an environment (ie. anythin between a '\begin' '\end' block
+    # in LaTeX). Do not add a paragraph anywhere else to facilitate inline
+    # equations in the HTML output.
     if child.type == 'env':
         tag = '<p>' + tag + '<p>'
         cur_frag['inline'] = False
@@ -1159,6 +1156,29 @@ def createFragmentDescriptor(child, frag_list):
     # Add the LaTeX code fragment to finalise the fragment, then add it to the
     # already existing ``frag_list``.
     cur_frag['tex'] = child.reconstructBody()
+    cur_frag['span'] = child.span
+
+    # Find the correct counter set.
+    cur_frag['counters'] = None
+    for idx, cc in enumerate(counters):
+        if child.span[0] == cc.start:
+            cur_frag['counters'] = counters[idx].counters
+            break
+        elif child.span[0] < cc.start:
+            if idx == 0:
+                cur_frag['counters'] = counters[0].counters
+            else:
+                cur_frag['counters'] = counters[idx - 1].counters
+            break
+        else:
+            pass
+
+    if (cur_frag['counters'] is None):
+        if len(counters) == 0:
+            cur_frag['counters'] = {}
+        else:
+            cur_frag['counters'] = counters[-1].counters
+
     frag_list.append(cur_frag)
     return tag
 
@@ -1176,8 +1196,9 @@ def runPDFLaTeX(build_dir: str, fname_tex: str):
     pdfLaTeX, including the final PDF file. This avoids clutter in the main
     directory.
 
-    This function will switch to the directory with the LaTeX file first to
-    avoid problems with relative file paths inside the LaTeX document.
+    This function changes to the directory with the LaTeX file to avoid
+    problems with relative file paths inside the LaTeX document. Afterwards, it
+    will change back to the original working directory.
 
     :param *str* fname_tex: name of LaTeX file (eg. 'my_file.tex').
     :param *str* build_dir: pdfLaTeX will put its output there.
@@ -1212,33 +1233,49 @@ def runPDFLaTeX(build_dir: str, fname_tex: str):
 
     try:
         # Compile the LaTeX file.
-        if config.verbose:
-            print('Compiling <{}>'.format(fname_tex))
         args = ('-halt-on-error', '-interaction=nonstopmode',
                 '-output-directory=' + build_dir, compile_file)
-        subprocess.check_output(('pdflatex',) + args)
-
-        # Switch back to the original directory.
-        os.chdir(cur_path)
+        if config.verbose:
+            print('Compiling <{}>'.format(fname_tex))
+        for ii in range(config.num_compile_iter):
+            subprocess.check_output(('pdflatex',) + args)
     except Exception as e:
         # Switch back to the original directory and propagate the error.
         os.chdir(cur_path)
         raise e
 
-    # Load all intermediate output files produced by LaTeX.
-    TexOut = collections.namedtuple('TexOut', 'tex log aux out nobby')
-    tmp = {}
-    for ext in TexOut._fields:
-        # Build the file name and load it, if it exists.
-        fname = fname_tex[:-3] + ext
-        if os.path.exists(fname):
-            tmp[ext] = open(fname, 'r').read()
-        else:
-            tmp[ext] = None
+    # ----------------------------------------------------------------------
+    # Load all auxiliary output files produced by LaTeX and put their
+    # content into a named tuple.
+    # ----------------------------------------------------------------------
+    # Load the source file.
+    aux_files = {'tex': open(compile_file, 'r').read()}
+
+    # These files must exist.
+    try:
+        for name in ['log', 'aux', 'out']:
+            # Build the file name and load it, if it exists.
+            fname = os.path.join(build_dir, compile_file[:-3] + name)
+            aux_files[name] = open(fname, 'r').read()
+    except FileNotFoundError as e:
+        print('Error: could not open all auxiliary files')
+        raise e
+
+    # The .nobby file only exists if Nobby salted the LaTeX file with
+    # counter dumps.
+    try:
+        fname = os.path.join(build_dir, compile_file[:-3] + 'nobby')
+        aux_files['nobby'] = open(fname, 'r').read()
+    except FileNotFoundError:
+        aux_files['nobby'] = None
 
     # Convert the dictionary to a named tuple and return the result.
-    val = [tmp[_] for _ in TexOut._fields]
+    TexOut = collections.namedtuple('TexOut', 'tex log aux out nobby')
+    val = [aux_files[_] for _ in TexOut._fields]
     tex_out = TexOut(*val)
+
+    # Switch back to the original directory, then return the auxiliary files.
+    os.chdir(cur_path)
     return tex_out
 
 
@@ -1464,6 +1501,8 @@ def compileFragmentToImage(arg_tuple):
                  '\\addtolength{\\paperheight}{20cm}\n'
                  + tmp_tw
         )
+    for key, value in frag['counters'].items():
+        preamble += '\\setcounter{{{}}}{{{}}}\n'.format(key, value)
     del tmp_tw
 
     # Ensure the target- directory exists.
@@ -1495,7 +1534,7 @@ def compileFragmentToImage(arg_tuple):
         Convenience function.
         """
         out = '\\begin{document}\n'
-        out = out + '\pdfsetmatrix {%f 0 0 %f}\n' % (scale, scale)
+        out += '\pdfsetmatrix {%f 0 0 %f}\n' % (scale, scale)
         out += data + '\n\\end{document}'
         return out
 
@@ -1856,6 +1895,116 @@ def findLaTeXMetaInfo(preamble):
     return title, author
 
 
+def compileWithCounters(preamble, body, path_names):
+    """
+    Return LaTeX counter values at various positions in source file ``body``.
+
+    Nobby uses the LaTeX package 'newfile' to create an additional .nobby file
+    during the compilation and populate it with counter values. The counter
+    dump occurs before every environment specified in
+    ``config.counter_dump_envs``. By default, these are all the standard
+    environments like 'align', 'figure', ...
+
+    After the compilation this function parses the .nobby file into a list of
+    named tuples, each of which specifies the position in the ``body`` and the
+    counter values at that point.
+
+    The purpose of this procedure is to facilitate a continuous enumeration of
+    equations, figures, etc. inside the SVG fragments. To this end
+    :func:`createFragmentDescriptor` will inject the necessary LaTeX code to
+    set the counters in the preamble of every fragment.
+
+    :param *str* preamble: document preamble.
+    :param *str* body: document body
+    :rtype list:
+    :return: list of named tuples. Each tuple notes the position in ``body``
+      and holds a list of all counter values.
+    """
+
+    # ----------------------------------------------------------------------
+    # Salt LaTeX file with counter dumps.
+    # ----------------------------------------------------------------------
+    # Augment the preamble with the commands to create an additional auxiliary
+    # output file. If the tex file was 'foo.tex' then the auxiliary file will
+    # be 'foo.nobby'.
+    preamble += ('\n\\usepackage{newfile}\n'
+                 '\\newoutputstream{nobby}\n'
+                 '\\openoutputfile{\\jobname.nobby}{nobby}\n')
+
+    # Separation character in .nobby file. This must be a character that LaTeX
+    # would not allow in label names, and the backslash is one such character.
+    sep = r'\\'
+
+    def repl(m):
+        # Prepend the original environment with a counter dump. The dump itself
+        # utilises the LaTeX 'file' package to write information into a file.
+        # In this case the file name ends in '.nobby' and contains the span of
+        # the environment in the original document and the actual command to
+        # write all counter values at the current position to the .nobby file.
+        out = r'\addtostream{nobby}{'
+        out += r'{1}{0}{2}{0}'.format(sep, m.span()[0], m.span()[1])
+        for name in config.counter_names:
+            out += '{1}{0} \\arabic{{{1}}}{0}'.format(sep, name)
+        out += '}'
+        return out + m.group()
+
+    # Build a regular expression that matches any \begin{env} where 'env'
+    # is defined in the config file.
+    envs = '|'.join(config.counter_dump_envs)
+    pat = re.compile(r'\\begin{(' + envs + ')}')
+    body = pat.sub(repl, body)
+    del envs, pat
+
+    # ----------------------------------------------------------------------
+    # Complete the LaTeX file and compile it.
+    # ----------------------------------------------------------------------
+    tex = preamble + '\n\\begin{document}\n' + body
+    tex += '\n\n\closeoutputstream{nobby}\n\\end{document}\n'
+    
+    build_dir = path_names.d_build
+    f_salted = '_nobby_counterdumps_' + path_names.f_tex
+    p_salted = os.path.join(path_names.d_base, f_salted)
+    open(p_salted, 'w').write(tex)
+    runPDFLaTeX(build_dir, p_salted)
+    del tex
+
+    # ----------------------------------------------------------------------
+    # Parse the foo.nobby file. Each line has the same format, eg.
+    # "40\53\section\1\subsection\0\subsubsection\0\equation\0\figure\0 ..."
+    # The separation character ``sep`` in this example is '\'.
+    # The first two numbers specify the span of the environment definition that
+    # will succeed the counter dump, eg. the span of a '\begin{align}'. The
+    # remaining entries are a ``sep`` separated list of counter- name and
+    # value. The following code parses these lines into a list of named tuples.
+    # ----------------------------------------------------------------------
+    fname = os.path.join(build_dir, f_salted[:-3]) + 'nobby'
+    NTCounter = collections.namedtuple('NTCounter', 'start stop counters')
+    counters = []
+    for line in open(fname, 'r').readlines():
+        # Ignore empty lines.
+        line = line.strip()
+        if line == '':
+            continue
+
+        # Convert the ``sep`` separated list into a white space separated
+        # list. Ensure there are no consecutive white spaces.
+        line = re.sub(' *' + sep + ' *', sep, line)
+
+        # Split the list into its constituents.
+        line = line.strip().split(sep)
+
+        # Extract the position where the counter dump occurred, along with the
+        # counter values themselves, and assign them to the named tuple
+        # NTCounter. Add that tuple to the output list.
+        start, stop = int(line[0]), int(line[1])
+        nt = NTCounter(start, stop, dict(zip(line[2::2], line[3::2])))
+        counters.append(nt)
+    
+    # Remove the temporary tex file.
+    os.remove(p_salted)
+    return counters
+
+
 # ----------------------------------------------------------------------------
 #                               Miscellaneous
 # ----------------------------------------------------------------------------
@@ -1947,6 +2096,8 @@ def parseCmdline():
          help='More Verbose.')
     padd('-wb', action='store_true', default=False,
          help='Open final HTML file in default browser.')
+    padd('--num-compile', default=config.num_compile_iter, metavar='N',
+         type=int, help='Compile source file N times (default: N=3)')
     padd('file', help='LaTeX file.')
 
     # Let argparse parse the command line.
@@ -1963,6 +2114,12 @@ def parseCmdline():
     config.verbose = args.v
     config.errtex_showfull = args.vv
     config.html_dir = args.o
+    config.num_compile_iter = args.num_compile
+
+    # Sanity check.
+    if args.num_compile < 1:
+        print('--num-compile must be a positive integer')
+        sys.exit(1)
 
     if args.vv:
         config.verbose = True
@@ -2027,16 +2184,18 @@ def main():
 
     # Ensure all dependencies are met.
     checkDependencies()
-
+    if config.verbose:
+        print('Passed dependency checks')
+        
     # Determine all path- and file names Nobby needs in due course.
     path_names = definePathNames(fname_source)
 
-    # Test compile the original LaTeX document and abort if it fails for
-    # whatever reason.
+    # Compile the original LaTeX document and abort if that fails.
     errmsg = 'Error: original document <{}> does not compile - Abort.'
     errmsg = errmsg.format(fname_source)
     try:
         config.tex_output = runPDFLaTeX(path_names.d_build, fname_source)
+        pass
     except subprocess.CalledProcessError as e:
         print(errmsg)
         print(e)
@@ -2055,6 +2214,11 @@ def main():
     stream = open(path_names.f_source, 'r').read()
     preamble, body = splitLaTeXDocument(stream)
 
+    # Add counter dumps to LaTeX file and recompile.
+    counters = compileWithCounters(preamble, body, path_names)
+    if config.verbose:
+        print('Created counter dumps')
+
     # Obtain meta information like document- author and title.
     title, author = findLaTeXMetaInfo(preamble)
 
@@ -2071,12 +2235,10 @@ def main():
     # fragments.
     fragments = []
     html = createHTMLMetaInfo(title, author)
-    html += convertTreeToHTML(tree, fragments, plugins.plugins)
+    html += convertTreeToHTML(tree, fragments, counters, plugins.plugins)
     if config.verbose:
-        if len(no_plugins) == 0:
-            print('No unknown LaTeX environments')
-        else:
-            print('No plugins for:')
+        if len(no_plugins) > 0:
+            print('Missing plugins for:')
             for _ in no_plugins:
                 print('  {}: <{}>'.format(*_))
 
