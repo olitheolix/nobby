@@ -1181,7 +1181,8 @@ def runPDFLaTeX(build_dir: str, fname_tex: str):
 
     :param *str* fname_tex: name of LaTeX file (eg. 'my_file.tex').
     :param *str* build_dir: pdfLaTeX will put its output there.
-    :return: **None**
+    :return: **namedtuple** with all auxiliary output files produced by LaTeX,
+      including 'aux', 'out', and 'log'.
     """
     # Return immediately if the source file cannot be read.
     if not os.path.exists(fname_tex):
@@ -1223,6 +1224,22 @@ def runPDFLaTeX(build_dir: str, fname_tex: str):
         # Switch back to the original directory and propagate the error.
         os.chdir(cur_path)
         raise e
+
+    # Load all intermediate output files produced by LaTeX.
+    TexOut = collections.namedtuple('TexOut', 'tex log aux out nobby')
+    tmp = {}
+    for ext in TexOut._fields:
+        # Build the file name and load it, if it exists.
+        fname = fname_tex[:-3] + ext
+        if os.path.exists(fname):
+            tmp[ext] = open(fname, 'r').read()
+        else:
+            tmp[ext] = None
+
+    # Convert the dictionary to a named tuple and return the result.
+    val = [tmp[_] for _ in TexOut._fields]
+    tex_out = TexOut(*val)
+    return tex_out
 
 
 def getCropBox(fname):
@@ -2019,7 +2036,7 @@ def main():
     errmsg = 'Error: original document <{}> does not compile - Abort.'
     errmsg = errmsg.format(fname_source)
     try:
-        runPDFLaTeX(path_names.d_build, fname_source)
+        config.tex_output = runPDFLaTeX(path_names.d_build, fname_source)
     except subprocess.CalledProcessError as e:
         print(errmsg)
         print(e)
