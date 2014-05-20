@@ -1,46 +1,57 @@
+% ----------------------------------------------------------------------
+% Nobby compatible default settings.
+
+% 11pt and 12pt fonts usually work but may exhibit errors in
+% conjunction with the --scale option.
+% 
+% Use documentclasses other than 'article' at your own risk.
+% ----------------------------------------------------------------------
 \documentclass[10pt]{article}
 \usepackage{amsmath, amsthm, amssymb}
+\usepackage[latin1]{inputenc}
 \usepackage{graphicx}
-\usepackage{caption}
-\usepackage{subcaption}
-\usepackage{url}
+
+% Nobby will copy the title and author as comments into the HTML file.
+\title{Nobby Demo}
+\author{Oliver Nagy (olitheolix@gmail.com)}
+
+% ----------------------------------------------------------------------
+% Include- and define your own packages and macros here, set LaTeX
+% counters and variables, etc.
+% ----------------------------------------------------------------------
 \usepackage{tikz}
 \usetikzlibrary{calc, through, arrows}
-\usepackage[latin1]{inputenc}
-\newtheorem{theorem}{Theorem}
+\usepackage{subcaption}
 \usepackage[pdftex,bookmarks=true, pdftitle={Nobby Demo},
 pdfauthor={Oliver Nagy}, colorlinks=true,
 citecolor=black, linkcolor=black]{hyperref}
 
-% Define font for vectors.
+% Custom macro.
 \newcommand{\mvec}[1]{\mathbf{#1}}
 
-% Define a color.
-\definecolor{blue}{rgb}{0,0.5,0.99}
+% New theorem environment. If you define eg. '\newtheorem{foo}{Foo}',
+% be sure to add 'foo' to 'config.counter_names'.
+\newtheorem{theorem}{Theorem}
 
-% Meta tags (Nobby will extract them and put them as comments into the
-% HTML file).
-\title{Nobby Demo}
-\author{Oliver Nagy (olitheolix@gmail.com)}
-
+% ----------------------------------------------------------------------
+% Do not (re)define macros, environments, counters, variables,
+% etc. beyond this point.
+% ----------------------------------------------------------------------
 \begin{document}
 \maketitle
 
-\section{Section One}
+\section{Outline}
 \label{sec:one}
 This file demonstrates some of the constructs Nobby can convert to
 HTML. Nobby relies on properly formatted \LaTeX code to do its work
 properly.
 
 Here is Pythagoras' theorem in an \emph{align} environment:
-\begin{align*}
+\begin{align}
   \label{eq:pyth}
   z = \sqrt{x^2 + y^2}.
-\end{align*}
+\end{align}
 Here it is again as an inline formula: $z = \sqrt{x^2 + y^2}$.
-
-That was it, except for a link to \hyperref[eq:pyth]{Pythagoras} and
-another \hyperref[eq:rel]{famous formula}.
 
 Nobby automatically escapes the <> characters. It is therefore safe to
 write <strong> or </strong> without accidentally inserting HTML tags.
@@ -49,25 +60,21 @@ Similarly, Nobby also translate quotes: ``text in quotes'' and
 escaped \LaTeX symbols like ``\$'', ``\{``, ``\}'' and ``\%'' to
 proper HTML, ie. without the leading backslash.
 
-\subsection{More formatting}
-Reference to \hyperref[sec:one]{previous section}.
 
+\subsection{More formatting}
 You can, of course, \emph{emphasise} something.
 
-An embedded math symbol $x=1$ here, or a more elaborate formula:
-$e^{i\pi} + 1 = 0$.
+Inline math expressions like $x=1$ or $e^{i\pi} + 1 = 0$ work fine.
 
 Here is some plain text. {{This sentence is actually an SVG image.}}
 
-Three dots are sometimes useful\ldots as is the \texttt{typewriter
-  font}.
-
-This is a \textbf{bold} statement.
+The \texttt{\textbackslash{ldots}} command is often useful\ldots as is the
+\texttt{typewriter font}, or a \textbf{bold} statement.
 
 \subsection{Environments}
-Nobby does not know about environments. Plugins compound this
-problem. Nobby ships with some plugins to convert standard
-environments.
+Nobby does not know about \LaTeX macros or environments. It converts
+them to images unless a plugin exists for them. The following examples
+demonstrate some of the default plugins.
 
 \subsubsection{Itemize}
 \begin{itemize}
@@ -88,20 +95,55 @@ environments.
 \end{equation}
 
 \subsubsection{Theorem}
-There is no default plugin for theorems. The entire theorem
-environment will thus be an image.
-\begin{theorem}
-  This is a theorem.
+There is no default plugin for theorems -- the entire theorem below is
+thus an image:
+\begin{theorem}[Gauss Law]
+  Let $\mathcal{V}$ be a volume and $\mathcal{S}$ its surface. Then
+  \begin{align}
+    \iiint_{\mathcal{V}} 1\; \textnormal{d}\mvec{v}
+    = \oint_{\mathcal{S}} 1\; \textnormal{d}\vec{s}.
+  \end{align}
 \end{theorem}
 
-Next is a comment. You cannot see it because it is, well, a
-comment. To see it, switch to the source code in your browser.
-% By the way, you are free to add comments. Comments will show up in
-% the HTML file (as comments, obviously).
+Note that the equation number is wrong (it should be 3, not 2). The
+reason for this inconsistency is that Nobby only takes a snapshot of
+the \LaTeX counters right before the environments listed in
+\texttt{config.counter\_dump\_envs}. Add ``theorem'' to that list and
+run Nobby again to rectify the problem.
 
-\section{Figures}
-Here is a floating table. \LaTeX would put it at a visually pleasing
-position, whereas Nobby put it right where it was defined.
+Nobby also converts \LaTeX comments to HTML. You cannot see those
+comments because, well, they are comments, alright. To see them anyway
+switch to the source code view in your browser.
+% By the way, Nobby also converts LaTeX comments to HTML.
+
+\section{References}
+\label{sec:ref}
+Nobby supports references via the standard \texttt{\textbackslash{href}}
+command. This works for equations, sections, tables, figures, and
+more.
+
+For instance, here is a numbered reference to Pythagoras' theorem
+(\ref{eq:pyth}) and Einstein's famous formula (\ref{eq:rel}).
+
+You may also use the \texttt{\textbackslash{hyperref}} command to
+create named links to reference the formulae of
+\hyperref[eq:pyth]{Pythagoras} and \hyperref[eq:rel]{Einstein}.
+
+Next are some examples of referenced sections.
+
+\subsection{Sub-Section}
+\label{ss:1}
+This is sub-Section \ref{ss:1} inside Section \ref{sec:ref}.
+
+\subsubsection{Sub-Sub-Section}
+\label{sss:1}
+This is sub-sub-Section \ref{sss:1} inside sub-Section \ref{ss:1} and
+Section \ref{sec:ref}. The \texttt{\textbackslash{hyperref}} also
+works. For instance, you can link to the \hyperref[sec:ref]{main section}.
+
+\section{Figures and Tables}
+Here is a floating table. Whereas  \LaTeX would put it at a visually
+pleasing position, Nobby puts it right where it was defined.
 \begin{table}
   \centering
   \begin{tabular}{c | c c c c}
@@ -115,7 +157,7 @@ position, whereas Nobby put it right where it was defined.
 
 A conventional figure environment that uses the
 \texttt{\textbackslash{subcaption}} package. The code and figures for
-the next example is actually from the
+the next example are from the
 \href{http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions}{Wikimedia}
 on \LaTeX. Note that the image is a PNG (hence the coarser appearance)
 because the inclusion of the three other images exceeds the image size
@@ -144,13 +186,20 @@ threshold (you can adjust it in Nobby's \texttt{config.py} file).\\
   \caption{Pictures of animals}\label{fig:animals}
 \end{figure}
 
-Reference to \hyperref[sec:one]{previous section}.
+Here is Figure \ref{fig:gull} by itself. Note that the counter in the
+figure caption increased (as expected).
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{gull}
+  \caption{The gull by itself.}
+  \label{fig:gull_alone}
+\end{figure}
 
 \section{TikZ Image}
-A popular package for technical drawings in \LaTeX is \emph{TikZ} and
-the following graph shows one of the
+\emph{TikZ} is a popular \LaTeX package for technical drawings.
+The following graph shows one of the
 \href{http://www.texample.net/tikz/examples/j-curve}{publicly
-  available examples}.
+  available} examples.
 \begin{tikzpicture}[
         %We set the scale and define some styles
         scale=1.5,
