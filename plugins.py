@@ -139,6 +139,7 @@ def ref(nodes):
     p = re.compile(r'\\newlabel{' + label_name + r'}{{(.*?)}{(.*?)}')
     m = p.search(config.tex_output.aux)
     if m is None:
+        print('Warning: cannot find label <{}>'.format(label_name))
         return nodes
     else:
         label_number = m.groups()[0]
