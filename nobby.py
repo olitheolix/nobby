@@ -1521,6 +1521,7 @@ def compileFragmentToImage(arg_tuple):
     if config.skip_existing_fragments:
         if os.path.exists(fname_svg) or os.path.exists(fname_alt):
             return
+
     # Names of auxiliary files (all reside in a dedicated build directory).
     tmp = os.path.join(build_dir, frag_name)
     fname_pdf = tmp + '.pdf'
@@ -1537,6 +1538,13 @@ def compileFragmentToImage(arg_tuple):
         out += '\pdfsetmatrix {%f 0 0 %f}\n' % (scale, scale)
         out += data + '\n\\end{document}'
         return out
+
+    def removeStaleFiles():
+        # Remove the temporary LaTeX file.
+        try:
+            os.remove(fname_tex)
+        except FileNotFoundError:
+            pass
 
     # Convenience.
     check_output = subprocess.check_output
@@ -1610,12 +1618,11 @@ def compileFragmentToImage(arg_tuple):
                 os.remove(fname_svg)
             else:
                 os.remove(fname_alt)
-
-        # Remove the temporary LaTeX file.
-        os.remove(fname_tex)
+        removeStaleFiles()
     except subprocess.CalledProcessError as e:
         # Process returned with non-zero exit code: dump the error message and
         # the complete process output.
+        removeStaleFiles()
         msg = 'Command <{}> returned with error code: {}\n'
         msg = msg.format(e.cmd, e.returncode)
         print(msg)
@@ -1630,8 +1637,10 @@ def compileFragmentToImage(arg_tuple):
         print('-' * 70)
         raise e
     except FileNotFoundError as e:
+        removeStaleFiles()
         raise e
     except AssertionError as e:
+        removeStaleFiles()
         print('-' * 70)
         msg = 'Problematic Source code'
         print(' ' * (35 - len(msg) // 2), msg)
@@ -1642,6 +1651,8 @@ def compileFragmentToImage(arg_tuple):
             print(frag['tex'])
         print('-' * 70)
         raise e
+    except (KeyboardInterrupt, SystemExit):
+        removeStaleFiles()
 
 
 def processFragments(preamble, html, fragments, path):
@@ -1665,7 +1676,7 @@ def processFragments(preamble, html, fragments, path):
     :return: ``html`` string with correct image extension in <img> tags.
     """
     # Generator: yield input tuple for compileFragmentToImage. The explicit
-    # generate is only necessary because multiprocessing.Pool can only pass
+    # generate is only necessary because `multiprocessing.Pool` can only pass
     # along one argument. To compound this problem, the generator packs the
     # arguments into a tuple.
     gen = ((path.d_base, path.d_build, path.d_html, preamble, frag)
@@ -1679,7 +1690,7 @@ def processFragments(preamble, html, fragments, path):
         for desc in gen:
             compileFragmentToImage(desc)
     else:
-        # Push the compilation into the available process pool.
+        # Push the compilation tasks into the available process pool.
         with multiprocessing.Pool(config.num_processes) as pool:
             if config.verbose:
                 pool.map(compileFragmentToImage, gen)
