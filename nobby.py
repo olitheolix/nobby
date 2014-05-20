@@ -1573,7 +1573,7 @@ def compileFragmentToImage(arg_tuple):
                 return None
 
             # Turn the PDF into a PNG and determine how much to crop/extend the
-            # margins to center the image.
+            # margins to ensure the image is vertically centered.
             check_output(('convert', fname_crop_aux, fname_crop_png))
             marg = computeMargins(fname_crop_png, cropBox)
             if marg is None:

@@ -7,32 +7,30 @@ Nobby2WP uploads the HTML file + SVG images to a Wordpress server.
 
 The main purpose of these two tools is to keep the LaTeX files under
 version control, instead of the entire Wordpress installation, and
-publish/update the content from the command line.
+conveniently publish/update the content via the command line.
 
 Nobby uses SVG images to facilitate seamless scaling of all equations
 and text.
 
-If you simply want to write Wordpress posts (or pages) in LaTeX then
-Nobby may be for you. If you are looking for a way to convert your PhD
-thesis to HTML... probably not, but feel free to try anyway!
+If you want to write web articles in LaTeX then Nobby may be for
+you. If you are looking for a way to convert your PhD thesis to
+HTML then... maybe not, but feel free to try anyway!
 
 
 More Information
 ================
 
 Nobby's strategy is to copy plain text verbatim from the LaTeX file to
-the HTML file, convert everything else (eg. macros and environments)
-into SVG images, and include those images in the HTML file.
+the HTML file and convert everything else (eg. macros and environments)
+into SVG images. Nobby does *not* make any attempt to interpret LaTeX
+code. Everything Nobby can and cannot do is a direct consequence of
+this strategy.
 
-Nobby does *not* make any attempt to interpret LaTeX code.
-Everything Nobby can and cannot do in terms of converting your
-document to HTML is a consequence of the aforementioned strategy.
-
-The strategy is flexibly enough to support any macros
-and environments you desire. You can even include figures and tables and
-use the `subcaption` package. The strategy is *not* flexible
-enough to reproduce page formats (eg. two-column) or page layout
-altering designs (eg. fancy headers).
+This strategy is flexible enough to support custom macros
+and environments. You can even include figures and tables,
+use the `subcaption` package to organise them, and reference them like
+in LaTeX. The strategy is *not* flexible enough to reproduce page
+layouts (eg. two-column) or fancy page headers.
 
 See `documentation <https://olitheolix.com/doc/nobby/>`_. for possible
 gotchas and more information.
@@ -42,6 +40,9 @@ Nobby features a `plugin system
 conversion of individual macros and environments. Plugins can, for
 instance, convert ``\ldots`` to '...' and ``\section{}`` to the
 corresponding ``<h1>`` and ``</h1>`` tags.
+
+It *may* be possible to support bibliographies and
+table-of-contents. Patches welcome. 
 
 
 Examples
