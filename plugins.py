@@ -18,8 +18,13 @@ import re
 import config
 import IPython
 
-ipshell = IPython.embed
+# Global variables for the section counters. The plugins for section,
+# subsection and subsubsection will increase them accordingly. The enumeration
+# will be consistent with LaTeX' internal one if no sectioning commands occur
+# inside environments included as SVG images.
+section_counters = {'s1': 0, 's2': 0, 's3': 0}
 
+ipshell = IPython.embed
 
 # -----------------------------------------------------------------------------
 # Plugins are normal function that take one argument. That argument is always
@@ -56,17 +61,36 @@ def chapter(nodes):
 
 
 def section(nodes):
-    ret = '<h1>', nodes, '</h1>'
+    assert len(nodes) > 0
+    label_name = nodes[0].body
+    
+    global section_counters
+    section_counters['s1'] += 1
+    section_counters['s2'] = 0
+    section_counters['s3'] = 0
+
+    enum = '{}  '.format(section_counters['s1'])
+    ret = '<h1>' + enum, nodes, '</h1>'
     return ret
 
 
 def subsection(nodes):
-    ret = '<h2>', nodes, '</h2>'
+    global section_counters
+    section_counters['s2'] += 1
+    section_counters['s3'] = 0
+
+    enum = '{}.{}  '.format(section_counters['s1'], section_counters['s2'])
+    ret = '<h2>' + enum, nodes, '</h2>'
     return ret
 
 
 def subsubsection(nodes):
-    ret = '<h3>', nodes, '</h3>'
+    global section_counters
+    section_counters['s3'] += 1
+    enum = '{}.{}.{}  '.format(section_counters['s1'], section_counters['s2'],
+                               section_counters['s3'])
+
+    ret = '<h3>' + enum, nodes, '</h3>'
     return ret
 
 
