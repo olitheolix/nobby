@@ -41,7 +41,7 @@ def itemize(nodes):
     return ret
 
 
-def enumerate(nodes):
+def nobby_enumerate(nodes):
     ret = '<ol>', nodes, '</ol>'
     return ret
 
@@ -166,12 +166,19 @@ def texttt(nodes):
     return ret
 
 
-def maketitle(nodes):
-    return '', nodes
+def ignore_macro_arg0(nodes):
+    # Void the macro. Do not consume any arguments.
+    return nodes
 
 
-def noindent(nodes):
-    return '', nodes
+def ignore_macro_arg1(nodes):
+    # Void the macro. Consume one argument.
+    return nodes[1:]
+
+
+def ignore_macro_arg2(nodes):
+    # Void the macro. Consume two arguments.
+    return nodes[2:]
 
 
 def newpage(nodes):
@@ -199,7 +206,7 @@ def url(nodes):
 # ---------------------------------------------------------------------------
 plugins = {
     'itemize': itemize,
-    'enumerate': enumerate,
+    'enumerate': nobby_enumerate,
     'item': item,
     'chapter': chapter,
     'section': section,
@@ -214,8 +221,10 @@ plugins = {
     'ldots': ldots,
     'textbf': textbf,
     'texttt': texttt,
-    'maketitle': maketitle,
-    'noindent': noindent,
+    'maketitle': ignore_macro_arg0,
+    'noindent': ignore_macro_arg0,
+    'footnote': ignore_macro_arg1,
+    'rule': ignore_macro_arg2,
     'newpage': newpage,
     'textbackslash': textbackslash,
     'url': url,
