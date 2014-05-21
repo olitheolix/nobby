@@ -10,7 +10,6 @@ Nobby converts LaTeX documents into an HTML file + SVG images.
 
 The source code is available on `GitHub
 <https://github.com/olitheolix/nobby>`_.
-Contents:
 
 .. toctree::
    :maxdepth: 1
