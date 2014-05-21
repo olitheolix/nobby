@@ -86,11 +86,11 @@ num_compile_iter = 1
 # Nobby will record all LaTeX counter values right before these
 # environments. If you have custom environments that alter any counters add it
 # to this list.
-counter_dump_envs =  ['align', 'equation', 'figure', 'table', 'subequations',
-                      'eqnarry', 'multiline', 'gather', 'flalign', 'alignat']
+counter_dump_envs = ['align', 'equation', 'figure', 'table', 'subequations',
+                     'eqnarry', 'multiline', 'gather', 'flalign', 'alignat']
 
 # LaTeX counters to track. If you specify new theorem like environments with
 # '\newtheorem{foo}{Foo} then you must add 'foo' to the list. If you create
 # other counters that you want to track, add them here as well.
-counter_names = ('section', 'subsection', 'subsubsection', 
+counter_names = ('section', 'subsection', 'subsubsection',
                  'equation', 'figure', 'table', 'footnote', 'theorem')

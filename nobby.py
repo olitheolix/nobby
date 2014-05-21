@@ -1490,7 +1490,7 @@ def compileFragmentToImage(arg_tuple):
 
     # Convenience.
     tex, frag_name = frag['tex'], frag['placeholder']
-    
+
     # Create the document preamble. It consists of the original preamble plus
     # some special options that Nobby requires.
     tmp_tw = '\\addtolength{{\\textwidth}}{{{0:0.2f}cm}}'
@@ -1500,7 +1500,7 @@ def compileFragmentToImage(arg_tuple):
                  '\\addtolength{\\paperwidth}{20cm}\n'
                  '\\addtolength{\\paperheight}{20cm}\n'
                  + tmp_tw
-        )
+                 )
     for key, value in frag['counters'].items():
         preamble += '\\setcounter{{{}}}{{{}}}\n'.format(key, value)
     del tmp_tw
@@ -1971,7 +1971,7 @@ def compileWithCounters(preamble, body, path_names):
     # ----------------------------------------------------------------------
     tex = preamble + '\n\\begin{document}\n' + body
     tex += '\n\n\closeoutputstream{nobby}\n\\end{document}\n'
-    
+
     build_dir = path_names.d_build
     f_salted = '_nobby_counterdumps_' + path_names.f_tex
     p_salted = os.path.join(path_names.d_base, f_salted)
@@ -2010,7 +2010,7 @@ def compileWithCounters(preamble, body, path_names):
         start, stop = int(line[0]), int(line[1])
         nt = NTCounter(start, stop, dict(zip(line[2::2], line[3::2])))
         counters.append(nt)
-    
+
     # Remove the temporary tex file.
     os.remove(p_salted)
     return counters
@@ -2197,7 +2197,7 @@ def main():
     checkDependencies()
     if config.verbose:
         print('Passed dependency checks')
-        
+
     # Determine all path- and file names Nobby needs in due course.
     path_names = definePathNames(fname_source)
 

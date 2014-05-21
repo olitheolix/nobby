@@ -36,6 +36,7 @@ ipshell = IPython.embed
 # Refer to the documentation for more information about plugins.
 # -----------------------------------------------------------------------------
 
+
 def itemize(nodes):
     ret = '<ul>', nodes, '</ul>'
     return ret
@@ -63,7 +64,7 @@ def chapter(nodes):
 def section(nodes):
     assert len(nodes) > 0
     label_name = nodes[0].body
-    
+
     global section_counters
     section_counters['s1'] += 1
     section_counters['s2'] = 0
