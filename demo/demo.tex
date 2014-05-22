@@ -95,9 +95,10 @@ demonstrate some of the default plugins.
 \end{equation}
 
 \subsubsection{Theorem}
-There is no default plugin for theorems -- the entire theorem below is
-thus an image (compare the quality of this version with the
-\href{http://en.wikipedia.org/wiki/Divergence_theorem}{original} on Wikipedia).
+There is also a default plugin for theorems. Compare the quality of
+this version with the 
+\href{http://en.wikipedia.org/wiki/Divergence_theorem}{original} on
+Wikipedia).
 \begin{theorem}[Divergence Theorem]
   Suppose $\mathcal{V}$ is a subset of $\mathbb{R}^n$ (in the case of
   $n=3$, $\mathcal{V}$ represents a volume in 3D space) which is
@@ -111,12 +112,7 @@ thus an image (compare the quality of this version with the
   \end{align}
 \end{theorem}
 
-Note that the equation number is wrong (it should be 3, not 2). The
-reason for this inconsistency is that Nobby only takes a snapshot of
-the \LaTeX counters at the start of any environment listed in
-\texttt{config.counter\_dump\_envs}. Add the string ``theorem'' to
-that list and run Nobby again to rectify the problem.
-
+\subsection{Comments}
 Nobby also converts \LaTeX comments to HTML. You cannot see those
 comments because, well, they are comments, alright. To see them anyway
 switch to the source code view in your browser.
