@@ -205,6 +205,26 @@ def textbackslash(nodes):
     return '\\', nodes
 
 
+def theorem(nodes):
+    # Start of theorem.
+    ret = '<p><div><b>Theorem</b>: '
+
+    # Extract the optional theorem argument if present.
+    if (len(nodes) > 0):
+        m = re.match(r'^\[(.*?)\]', nodes[0].body)
+        if m is not None:
+            # Found an optional argument (ie. something inside square
+            # brackets): treat it as the theorem name.
+            ret += m.groups()[0]
+
+            # Remove the span of the theorem name from the node body.
+            _, stop = m.span()
+            nodes[0].body = nodes[0].body[stop+2:]
+            
+    # Put the theorem content itself into a blockquote environment.
+    return ret + '<blockquote><i>', nodes, '</i></blockquote></div><p>'
+
+    
 def url(nodes):
     # Sanity check.
     assert len(nodes) > 0
@@ -221,30 +241,31 @@ def url(nodes):
 # environment the plugin processes, and the value is the function.
 # ---------------------------------------------------------------------------
 plugins = {
-    'itemize': itemize,
-    'enumerate': nobby_enumerate,
-    'item': item,
     'chapter': chapter,
+    'comment_': comment,
+    'emph': emph,
+    'enumerate': nobby_enumerate,
+    'footnote': ignore_macro_arg1,
+    'href': href,
+    'hyperref': hyperref,
+    'item': item,
+    'itemize': itemize,
+    'label': label,
+    'ldots': ldots,
+    'maketitle': ignore_macro_arg0,
+    'newpage': newpage,
+    'noindent': ignore_macro_arg0,
+    'ref': ref,
+    'rule': ignore_macro_arg2,
     'section': section,
     'section*': section_star,
     'subsection': subsection,
     'subsection*': subsection_star,
     'subsubsection': subsubsection,
     'subsubsection*': subsubsection_star,
-    'comment_': comment,
-    'label': label,
-    'hyperref': hyperref,
-    'ref': ref,
-    'href': href,
-    'emph': emph,
-    'ldots': ldots,
+    'theorem': theorem,
+    'textbackslash': textbackslash,
     'textbf': textbf,
     'texttt': texttt,
-    'maketitle': ignore_macro_arg0,
-    'noindent': ignore_macro_arg0,
-    'footnote': ignore_macro_arg1,
-    'rule': ignore_macro_arg2,
-    'newpage': newpage,
-    'textbackslash': textbackslash,
     'url': url,
     }
