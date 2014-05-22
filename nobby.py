@@ -283,7 +283,7 @@ def findMacros(body):
     delim = {}
 
     # Find all macros, ie search for '\macroname' and extract 'macroname'.
-    pat = re.compile(r'(\\.*?)(?![a-zA-Z])')
+    pat = re.compile(r'(\\.*?)(?![a-zA-Z*])')
 
     # The parser below uses a while loop instead of `re.finditer` because I do
     # not know how to construct a regular expression that matches up to, but

@@ -61,6 +61,11 @@ def chapter(nodes):
     return ret
 
 
+def section_star(nodes):
+    ret = '<h1>', nodes, '</h1>'
+    return ret
+
+
 def section(nodes):
     assert len(nodes) > 0
     label_name = nodes[0].body
@@ -75,6 +80,11 @@ def section(nodes):
     return ret
 
 
+def subsection_star(nodes):
+    ret = '<h2>', nodes, '</h2>'
+    return ret
+
+
 def subsection(nodes):
     global section_counters
     section_counters['s2'] += 1
@@ -82,6 +92,11 @@ def subsection(nodes):
 
     enum = '{}.{}  '.format(section_counters['s1'], section_counters['s2'])
     ret = '<h2>' + enum, nodes, '</h2>'
+    return ret
+
+
+def subsubsection_star(nodes):
+    ret = '<h3>', nodes, '</h3>'
     return ret
 
 
@@ -211,8 +226,11 @@ plugins = {
     'item': item,
     'chapter': chapter,
     'section': section,
+    'section*': section_star,
     'subsection': subsection,
+    'subsection*': subsection_star,
     'subsubsection': subsubsection,
+    'subsubsection*': subsubsection_star,
     'comment_': comment,
     'label': label,
     'hyperref': hyperref,

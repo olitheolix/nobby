@@ -222,6 +222,16 @@ def test_findMacros():
     start, stop = out[1].span
     assert body[start:stop] == r'\vdots'
 
+    body = r'\section* blah'
+    # Find macros and convert the delimiter dictionary to a sorted list.
+    _, out = findMacros(body)
+    out = [out[_] for _ in sorted(out)]
+
+    assert len(out) == 1
+    assert out[0] == ((0, 9), None, 'macro', 'section*')
+    start, stop = out[0].span
+    assert body[start:stop] == r'\section*'
+
 
 def test_findMacros_single():
     bodies = [r'\ldots ', r'\ldots1', r'\ldots~', r'\ldots.',
