@@ -1008,18 +1008,15 @@ def convertTreeToHTML(node, frag_list, counters, plugins):
             # Pick the plugin.
             func = plugins[child.name]
 
-            # Pass all children of the node to the plugin.
-            plugin_args = child.kids
-
             # Execute the plugin via the ``runPlugin`` wrapper (it ensures sane
-            # input and output).
-            ret_nodes = runPlugin(func, plugin_args, node)
+            # input and output). All kids are macro/env arguments.
+            ret_nodes = runPlugin(func, child)
 
             # Replace the original node with those returned by the plugin.
             node.kids.pop(child_idx)
             for _ in reversed(ret_nodes):
                 node.kids.insert(child_idx, _)
-            del func, plugin_args, ret_nodes
+            del func, ret_nodes
         else:
             # Convert the fragment to an SVG image.
 
@@ -1057,7 +1054,7 @@ def convertTreeToHTML(node, frag_list, counters, plugins):
     return html
 
 
-def runPlugin(func, kids, parent):
+def runPlugin(func, node):
     """
     Wrapper for `func(kids)`. Return sanitised output of that function.
 
@@ -1066,14 +1063,13 @@ def runPlugin(func, kids, parent):
     strings. Strings will be automatically converted to :func:`TreeNode`
     objects (ie. text nodes).
 
-    :param *callable* func:
-    :param *list* kids:
-    :param *TreeNode* parent:
+    :param *callable* func: the plugin function.
+    :param *TreeNode* node: current node that requires the plugin
     :return: list of :func:`TreeNode` objects.
     :rtype: list of **TreeNodes**
     """
     # Call the plugin and ensure the return value is a tuple.
-    ret_nodes = func(kids)
+    ret_nodes = func(node.kids, node)
     if not isinstance(ret_nodes, (tuple, list)):
         ret_nodes = (ret_nodes, )
 
@@ -1100,8 +1096,8 @@ def runPlugin(func, kids, parent):
                 continue
 
             # Create a text node.
-            ret_nodes = TreeNode(parent, 'html')
-            ret_nodes.span = parent.span
+            ret_nodes = TreeNode(node.parent, 'html')
+            ret_nodes.span = node.parent.span
             ret_nodes.body = nn
             out.append(ret_nodes)
         elif isinstance(nn, TreeNode):

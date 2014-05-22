@@ -37,22 +37,22 @@ ipshell = IPython.embed
 # -----------------------------------------------------------------------------
 
 
-def itemize(nodes):
+def itemize(nodes, parent):
     ret = '<ul>', nodes, '</ul>'
     return ret
 
 
-def nobby_enumerate(nodes):
+def nobby_enumerate(nodes, parent):
     ret = '<ol>', nodes, '</ol>'
     return ret
 
 
-def item(nodes):
+def item(nodes, parent):
     ret = '<li>', nodes
     return ret
 
 
-def chapter(nodes):
+def chapter(nodes, parent):
     """
     Chapters get the same heading as sections. This is for simplicity, and also
     because Nobby is meant for articles, not reports, books, etc.
@@ -61,12 +61,12 @@ def chapter(nodes):
     return ret
 
 
-def section_star(nodes):
+def section_star(nodes, parent):
     ret = '<h1>', nodes, '</h1>'
     return ret
 
 
-def section(nodes):
+def section(nodes, parent):
     assert len(nodes) > 0
     label_name = nodes[0].body
 
@@ -80,12 +80,12 @@ def section(nodes):
     return ret
 
 
-def subsection_star(nodes):
+def subsection_star(nodes, parent):
     ret = '<h2>', nodes, '</h2>'
     return ret
 
 
-def subsection(nodes):
+def subsection(nodes, parent):
     global section_counters
     section_counters['s2'] += 1
     section_counters['s3'] = 0
@@ -95,12 +95,12 @@ def subsection(nodes):
     return ret
 
 
-def subsubsection_star(nodes):
+def subsubsection_star(nodes, parent):
     ret = '<h3>', nodes, '</h3>'
     return ret
 
 
-def subsubsection(nodes):
+def subsubsection(nodes, parent):
     global section_counters
     section_counters['s3'] += 1
     enum = '{}.{}.{}  '.format(section_counters['s1'], section_counters['s2'],
@@ -110,17 +110,17 @@ def subsubsection(nodes):
     return ret
 
 
-def comment(nodes):
+def comment(nodes, parent):
     ret = '<!--', nodes, '-->\n'
     return ret
 
 
-def label(nodes):
+def label(nodes, parent):
     ret = '<a name="{}"></a>'.format(nodes[0].body)
     return ret
 
 
-def hyperref(nodes):
+def hyperref(nodes, parent):
     assert len(nodes) >= 2
     labelname = nodes[0].body
     linktext = nodes[1].body
@@ -133,7 +133,7 @@ def hyperref(nodes):
     return ret
 
 
-def href(nodes):
+def href(nodes, parent):
     """
     This is almost identical to hyperref except that it requires two mandatory
     arguments, instead of only one. The first node is therefore also a curly
@@ -146,7 +146,7 @@ def href(nodes):
     return ret
 
 
-def ref(nodes):
+def ref(nodes, parent):
     """
     Parse the .aux content for the corresponding label and return it.
     """
@@ -163,49 +163,49 @@ def ref(nodes):
         return tag, nodes[1:]
 
 
-def emph(nodes):
+def emph(nodes, parent):
     ret = '<em>', nodes, '</em>'
     return ret
 
 
-def ldots(nodes):
+def ldots(nodes, parent):
     return '...', nodes
 
 
-def textbf(nodes):
+def textbf(nodes, parent):
     ret = '<b>', nodes, '</b>'
     return ret
 
 
-def texttt(nodes):
+def texttt(nodes, parent):
     ret = '<tt>', nodes, '</tt>'
     return ret
 
 
-def ignore_macro_arg0(nodes):
+def ignore_macro_arg0(nodes, parent):
     # Void the macro. Do not consume any arguments.
     return nodes
 
 
-def ignore_macro_arg1(nodes):
+def ignore_macro_arg1(nodes, parent):
     # Void the macro. Consume one argument.
     return nodes[1:]
 
 
-def ignore_macro_arg2(nodes):
+def ignore_macro_arg2(nodes, parent):
     # Void the macro. Consume two arguments.
     return nodes[2:]
 
 
-def newpage(nodes):
+def newpage(nodes, parent):
     return '<p>', nodes
 
 
-def textbackslash(nodes):
+def textbackslash(nodes, parent):
     return '\\', nodes
 
 
-def theorem(nodes):
+def theorem(nodes, parent):
     # Start of theorem.
     ret = '<p><div><b>Theorem</b>: '
 
@@ -225,11 +225,11 @@ def theorem(nodes):
     return ret + '<blockquote><i>', nodes, '</i></blockquote></div><p>'
 
     
-def url(nodes):
+def url(nodes, parent):
     # Sanity check.
     assert len(nodes) > 0
 
-    # The node body contains the text of the entire text of the first argument.
+    # The node body contains the entire text of the first argument.
     body = nodes[0].body
 
     # Form the HTML anchor tag.

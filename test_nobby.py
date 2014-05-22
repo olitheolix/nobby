@@ -682,7 +682,7 @@ def test_convertTreeToHTML_1():
 
 
 def test_convertTreeToHTML_plugin_env():
-    def c_itemize(nodes):
+    def c_itemize(nodes, parent):
         return '<ul>', nodes, '</ul>'
 
     body = r'\begin{itemize}foo\end{itemize}'
@@ -709,7 +709,7 @@ def test_convertTreeToHTML_plugin_env_bug1():
     Bug occurred if a macro for which a plugin existed was nested inside an
     environment, even if was just a {} environment.
     """
-    def c_ldots(nodes):
+    def c_ldots(nodes, parent):
         return '...', nodes
 
     body = r'{foo\ldots}'
@@ -724,11 +724,11 @@ def test_convertTreeToHTML_plugin_env_bug1():
 
 
 def test_convertTreeToHTML_plugin_macro():
-    def c_ldots(nodes):
+    def c_ldots(nodes, parent):
         ret = '...', nodes
         return ret
 
-    def c_fbox(nodes):
+    def c_fbox(nodes, parent):
         ret = 'fbox[', nodes, ']'
         return ret
 
