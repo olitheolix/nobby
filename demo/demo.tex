@@ -96,20 +96,26 @@ demonstrate some of the default plugins.
 
 \subsubsection{Theorem}
 There is no default plugin for theorems -- the entire theorem below is
-thus an image:
-\begin{theorem}[Gauss Law]
-  Let $\mathcal{V}$ be a volume and $\mathcal{S}$ its surface. Then
+thus an image (compare the quality of this version with the
+\href{http://en.wikipedia.org/wiki/Divergence_theorem}{original} on Wikipedia).
+\begin{theorem}[Divergence Theorem]
+  Suppose $\mathcal{V}$ is a subset of $\mathbb{R}^n$ (in the case of
+  $n=3$, $\mathcal{V}$ represents a volume in 3D space) which is
+  compact and has a piecewise smooth boundary $\mathcal{S}$ (also
+  indicated with $\partial\mathcal{V} = \mathcal{S}$). If $F$ is a
+  continuously differentiable vector field defined on a neighborhood
+  of $\mathcal{V}$, then we have
   \begin{align}
-    \iiint_{\mathcal{V}} 1\; \textnormal{d}\mvec{v}
-    = \oint_{\mathcal{S}} 1\; \textnormal{d}\vec{s}.
+    \iiint_{\mathcal{V}} \nabla \cdot F(\mvec{v})\; \textnormal{d}\mvec{v}
+    = \oint_{\mathcal{S}} F(\mvec{s})\; \textnormal{d}\mvec{s}.
   \end{align}
 \end{theorem}
 
 Note that the equation number is wrong (it should be 3, not 2). The
 reason for this inconsistency is that Nobby only takes a snapshot of
-the \LaTeX counters right before the environments listed in
-\texttt{config.counter\_dump\_envs}. Add ``theorem'' to that list and
-run Nobby again to rectify the problem.
+the \LaTeX counters at the start of any environment listed in
+\texttt{config.counter\_dump\_envs}. Add the string ``theorem'' to
+that list and run Nobby again to rectify the problem.
 
 Nobby also converts \LaTeX comments to HTML. You cannot see those
 comments because, well, they are comments, alright. To see them anyway
