@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Nobby. If not, see <http://www.gnu.org/licenses/>.
 
+import multiprocessing
+
 # Removes build directory when nobby is done.
 keep_builddir = False
 
@@ -46,7 +48,7 @@ pdf_scale = 1.3
 textwidth_addon = 0
 
 # Number of worker processes to compile fragments.
-num_processes = 20
+num_processes = multiprocessing.cpu_count()
 
 # Format of LaTeX fragment placeholders. These will replace the LaTeX code
 # portion that will be compiled to an image. Once the image exists, proper
