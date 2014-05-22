@@ -1148,7 +1148,7 @@ def createFragmentDescriptor(child, frag_list, counters):
     # in LaTeX). Do not add a paragraph anywhere else to facilitate inline
     # equations in the HTML output.
     if child.type == 'env':
-        tag = '<p>' + tag + '<p>'
+        tag = '<p><div align="center">' + tag + '<p></div>'
         cur_frag['inline'] = False
     else:
         cur_frag['inline'] = True
