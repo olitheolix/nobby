@@ -891,7 +891,7 @@ def convertTextToHTML(body):
     return body
 
 
-def convertTreeToHTML(node, frag_list, counters, plugins):
+def convertTreeToHTML(node, frag_list, plugins):
     """
     Convert a LaTeX tree into a HTML file and return the fragments.
 
@@ -994,11 +994,11 @@ def convertTreeToHTML(node, frag_list, counters, plugins):
                 tmp.body = child.kids[0].body
 
                 # Double brace environments become fragments by definition.
-                html += createFragmentDescriptor(tmp, frag_list, counters)
+                html += createFragmentDescriptor(tmp, frag_list)
                 del tmp
             else:
                 # A single curly brace environment: descend.
-                html += convertTreeToHTML(child, frag_list, counters, plugins)
+                html += convertTreeToHTML(child, frag_list, plugins)
 
             # Continue with next child, regardless of whether it was a single-
             # or double braced environment.
@@ -1048,7 +1048,7 @@ def convertTreeToHTML(node, frag_list, counters, plugins):
 
             # Create a new fragment descriptor based on the node body. The
             # function will return the necessary HTML code to load the image.
-            html += createFragmentDescriptor(child, frag_list, counters)
+            html += createFragmentDescriptor(child, frag_list)
 
             # Close the anchor tags.
             html += '</a>' * num_labels
@@ -1121,7 +1121,7 @@ def runPlugin(func, node):
     return out
 
 
-def createFragmentDescriptor(child, frag_list, counters):
+def createFragmentDescriptor(child, frag_list):
     """
     Add fragment for ``child`` to ``frag_list`` and return HTML <img> tag.
 
@@ -1132,7 +1132,7 @@ def createFragmentDescriptor(child, frag_list, counters):
     :param *str* fname_tex: name of LaTeX file (eg. 'my_file.tex').
     :param *str* build_dir: pdfLaTeX will put its output there.
     :return *str*: HTML image tag.
-    """
+    """    
     # Initialise the fragment data structure.
     cur_frag = {'name': child.type}
 
@@ -1163,6 +1163,9 @@ def createFragmentDescriptor(child, frag_list, counters):
     # already existing ``frag_list``.
     cur_frag['tex'] = child.reconstructBody()
     cur_frag['span'] = child.span
+
+    # Convenience.
+    counters = config.counter_values
 
     # Find the correct counter set.
     cur_frag['counters'] = None
@@ -2238,8 +2241,7 @@ def main():
     preamble, body = splitLaTeXDocument(stream)
 
     # Add counter dumps to LaTeX file and recompile.
-    counters = compileWithCounters(preamble, body, path_names)
-    config.counter_values = counters
+    config.counter_values = compileWithCounters(preamble, body, path_names)
     if config.verbose:
         print('Created counter dumps')
 
@@ -2259,7 +2261,7 @@ def main():
     # fragments.
     fragments = []
     html = createHTMLMetaInfo(title, author)
-    html += convertTreeToHTML(tree, fragments, counters, plugins.plugins)
+    html += convertTreeToHTML(tree, fragments, plugins.plugins)
     if config.verbose:
         if len(no_plugins) > 0:
             print('Missing plugins for:')

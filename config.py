@@ -102,5 +102,7 @@ counter_names = ('section', 'subsection', 'subsubsection',
 
 # Serves as a global variable for the parsed .nobby file. It will be a list of
 # named tuples that specify locations in the source code along with a
-# corresponding set of LaTeX counter values.
+# corresponding set of LaTeX counter values. The variable is set only once
+# after the salted LaTeX file compiled. It is supposed to remain constant
+# thereafter.
 counter_values = tuple()
