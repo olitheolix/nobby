@@ -586,7 +586,23 @@ class TreeNode():
         self.type = ntype
 
         # The span in the original LaTeX document.
+        assert isinstance(span, (tuple, list)) and (len(span) == 2)
         self.span = span
+
+        # Find the set of LaTeX counters closes to the span of this node.
+        counters = config.counter_values
+        for idx, cc in enumerate(counters):
+            if self.span[0] == cc.start:
+                self.counters = cc.counters
+                break
+            elif self.span[0] < cc.start:
+                if idx == 0:
+                    self.counters = counters[0].counters
+                else:
+                    self.counters = counters[idx - 1].counters
+                break
+            else:
+                pass
 
         # Contains the LaTeX code *without* the delimiter strings (eg. '{')
         self.body = None
