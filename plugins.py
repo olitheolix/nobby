@@ -18,13 +18,6 @@ import re
 import config
 import IPython
 
-# Global variables for the section counters. The plugins for section,
-# subsection and subsubsection will increase them accordingly. The enumeration
-# will be consistent with LaTeX' internal one if no sectioning commands occur
-# inside environments included as SVG images.
-section_counters = {'s1': 0, 's2': 0, 's3': 0}
-theorem_counters = {}
-
 ipshell = IPython.embed
 
 # -----------------------------------------------------------------------------
@@ -71,12 +64,12 @@ def section(nodes, parent):
     assert len(nodes) > 0
     label_name = nodes[0].body
 
-    global section_counters
-    section_counters['s1'] += 1
-    section_counters['s2'] = 0
-    section_counters['s3'] = 0
-
-    enum = '{}  '.format(section_counters['s1'])
+    # LaTeX' Section counter. Add +1 because the Nobby recorded the counter
+    # value before the \section command. 
+    cnt = int(parent.counters['section']) + 1
+    
+    # Create the heading with number and name (eg. '1 Introduction').
+    enum = '{}  '.format(cnt)
     ret = '<h1>' + enum, nodes, '</h1>'
     return ret
 
@@ -87,11 +80,15 @@ def subsection_star(nodes, parent):
 
 
 def subsection(nodes, parent):
-    global section_counters
-    section_counters['s2'] += 1
-    section_counters['s3'] = 0
+    # Get LaTeX' Section and Sub-Section counter. Add +1 to the sub-section
+    # counter because Nobby recorded it just before the \subsection
+    # command. The +1 is unnecessary for the 'section' counter because the
+    # \subsection macro does not increment it.
+    cnt_sec = int(parent.counters['section'])
+    cnt_subsec = int(parent.counters['subsection']) + 1
 
-    enum = '{}.{}  '.format(section_counters['s1'], section_counters['s2'])
+    # Create the heading with number and name (eg. '1.1 Introduction').
+    enum = '{}.{}  '.format(cnt_sec, cnt_subsec)
     ret = '<h2>' + enum, nodes, '</h2>'
     return ret
 
@@ -102,10 +99,16 @@ def subsubsection_star(nodes, parent):
 
 
 def subsubsection(nodes, parent):
-    global section_counters
-    section_counters['s3'] += 1
-    enum = '{}.{}.{}  '.format(section_counters['s1'], section_counters['s2'],
-                               section_counters['s3'])
+    # Get LaTeX' Section, Sub-Section, and Sub-Sub-Section counter. Add +1 to
+    # the sub-sub-section counter because Nobby recorded it just before the
+    # \subsubsection command. The +1 is unnecessary for the other two counters
+    # because the \subsubsection macro does not increment them.
+    cnt_sec = int(parent.counters['section'])
+    cnt_subsec = int(parent.counters['subsection'])
+    cnt_subsubsec = int(parent.counters['subsubsection']) + 1
+
+    # Create the heading with number and name (eg. '1.1.1 Introduction').
+    enum = '{}.{}.{}  '.format(cnt_sec, cnt_subsec, cnt_subsubsec)
 
     ret = '<h3>' + enum, nodes, '</h3>'
     return ret
@@ -212,15 +215,11 @@ def theorem(nodes, parent):
     # ``\newtheorem`` command.
     env_name = parent.name.capitalize()
 
-    # Increment the counter for the current theorem environment. The counters
-    # are not shared among different theorem environments, ie. 'lemma',
-    # 'theorem', 'example', etc all have their own.
-    if env_name not in theorem_counters:
-        theorem_counters[env_name] = 0
-    theorem_counters[env_name] += 1
+    # Access the LaTeX counter values to determine the theorem number.
+    cnt = int(parent.counters[parent.name]) + 1
 
     # Add the count to the displayed environment name to obtain eg. 'Lemma 3'.
-    env_name += ' {}'.format(theorem_counters[env_name])
+    env_name += ' {}'.format(cnt)
     
     # Theorems get their own paragraph. The eg 'Lemma 3' name is in bold.
     ret = '<p><div><b>' + env_name + '</b>: '
