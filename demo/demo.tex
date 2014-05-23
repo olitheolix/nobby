@@ -1,10 +1,13 @@
 % ----------------------------------------------------------------------
-% Nobby compatible default settings.
-
+% Nobby compatible default settings. Make sure you document features
+% all of the packages and definitions between here and the 'Optional'
+% section.
+% 
 % 11pt and 12pt fonts usually work but may exhibit errors in
 % conjunction with the --scale option.
 % 
 % Use documentclasses other than 'article' at your own risk.
+% 
 % ----------------------------------------------------------------------
 \documentclass[10pt]{article}
 \usepackage{amsmath, amsthm, amssymb}
@@ -15,10 +18,22 @@
 \title{Nobby Demo}
 \author{Oliver Nagy (olitheolix@gmail.com)}
 
+% Define default theorem environments. If you define additiona onses,
+% eg. '\newtheorem{foo}{Foo}', be sure to add 'foo' to
+% 'config.counter_names'.
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{example}{Example}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+
 % ----------------------------------------------------------------------
+% Optional
+% 
 % Include- and define your own packages and macros here, set LaTeX
-% counters and variables, etc.
+% counters, modify variables, etc.
 % ----------------------------------------------------------------------
+\usepackage{parskip}
 \usepackage{tikz}
 \usetikzlibrary{calc, through, arrows}
 \usepackage{subcaption}
@@ -28,10 +43,6 @@ citecolor=black, linkcolor=black]{hyperref}
 
 % Custom macro.
 \newcommand{\mvec}[1]{\mathbf{#1}}
-
-% New theorem environment. If you define eg. '\newtheorem{foo}{Foo}',
-% be sure to add 'foo' to 'config.counter_names'.
-\newtheorem{theorem}{Theorem}
 
 % ----------------------------------------------------------------------
 % Do not (re)define macros, environments, counters, variables,
@@ -94,12 +105,21 @@ demonstrate some of the default plugins.
   E = mc^2.
 \end{equation}
 
-\subsubsection{Theorem}
-There is also a default plugin for theorems. Compare the quality of
-this version with the 
+\subsubsection{Theorem Envoronments}
+The AMS package provides way to define theorem environments with
+\texttt{\textbackslash{newtheorem\{theorem\}\{Theorem\}}}. Nobby
+assumes that ``lemma'', ``theorem'', ``example'', ``corollary'' and
+``definition'' are defined the document preamble. The HTML conversion
+will fail if not.
+
+Nobby ships with a single plugin to handle all these theorem
+environments. Here are some examples.
+
+Compare the quality of this version with the 
 \href{http://en.wikipedia.org/wiki/Divergence_theorem}{original} on
 Wikipedia).
 \begin{theorem}[Divergence Theorem]
+  \label{thm:div}
   Suppose $\mathcal{V}$ is a subset of $\mathbb{R}^n$ (in the case of
   $n=3$, $\mathcal{V}$ represents a volume in 3D space) which is
   compact and has a piecewise smooth boundary $\mathcal{S}$ (also
@@ -111,6 +131,72 @@ Wikipedia).
     = \oint_{\mathcal{S}} F(\mvec{s})\; \textnormal{d}\mvec{s}.
   \end{align}
 \end{theorem}
+
+Another one from \href{http://en.wikipedia.org/wiki/Divergence}{Wikipedia}:
+\begin{definition}[Divergence in Cartesian Coordinates]
+  \label{def:div}
+  Let $x, y, z$ be a system of Cartesian coordinates in 3-dimensional
+  Euclidean space, and let $i, j, k$ be the corresponding basis of unit
+  vectors. The divergence of a continuously differentiable vector
+  field $F = U i + V j + W k$ is equal to the scalar-valued function:
+  \begin{align}
+    \textnormal{div } F = \nabla \cdot F = 
+    \frac{\partial U}{\partial x} +
+    \frac{\partial V}{\partial y} +
+    \frac{\partial W}{\partial z}.
+  \end{align}
+\end{definition}
+
+Here is yet another definition from Wikipedia to demonstrate the
+continuous enumeration of theorem environments and equations
+therein. The definition also references its own equations. The
+following definition of the Laplacian is from
+\href{http://en.wikipedia.org/wiki/Laplace_operator}{here}.
+\begin{definition}[Laplace Operator]
+  \label{def:lap}
+  The Laplace operator is a second order differential operator in the
+  $n$-dimensional Euclidean space, defined as the divergence
+  ($\nabla\cdot$) of the gradient ($\nabla f$). Thus if $f$ is a
+  twice-differentiable real-valued function, then the Laplacian of $f$
+  is defined by
+  \begin{align}
+    \label{eq:lapdef1}
+    \Delta f = \nabla^2f = \nabla\cdot\nabla f
+  \end{align}
+  where the latter notations derive from formally writing $\nabla =
+  \left(\frac{\partial}{\partial x_1}, \ldots,
+    \frac{\partial}{\partial x_n}\right)$. Equivalently, the Laplacian
+  of $f$ is the sum of all the unmixed second partial derivatives in the
+  Cartesian coordinates
+  \begin{align}
+    \label{eq:lapdef2}
+    \Delta f = \sum_{i=1}^n \frac{\partial^2f}{\partial x_i^2}
+  \end{align}
+  As a second-order differential operator, the Laplace operator maps
+  $C^k$-functions to $C^{k-2}$-functions for $k\geq 2$. The expression
+  (\ref{eq:lapdef1}) (or equivalently (\ref{eq:lapdef2})) defines an
+  operator $\Delta : C^k(\mathbb{R}^n) \mapsto
+  C^{k-2}(\mathbb{R}^n)$, or more generally an operator $\Delta :
+  C^k(\Omega) \mapsto C^{k-2}(\Omega)$ for any open set $\Omega$.
+\end{definition}
+
+You can numerically reference Theorem \ref{thm:div}, Definition
+\ref{def:div} and Definition \ref{def:lap} as usual. Alternatively,
+you may also reference them with the \texttt{\textbackslash{hyperref}}
+macro and link directly to the \hyperref[thm:div]{Divergence Theorem},
+the \hyperref[def:div]{Definition of Divergence}, or the
+\hyperref[def:div]{Definition of the Laplacian}.
+
+\begin{theorem}
+  \label{thm:no_largest_int}
+  There is no largest integer.
+\end{theorem}
+\begin{proof}
+  Suppose there were a largest integer $n\in\mathbb{N}$. Then it must
+  be true that $n > n'\;\forall n'\in\mathbb{N}$ yet $n' = n + 1$
+  is larger than $n$. This contradicts the supposition. There is hence
+  no largest integer.
+\end{proof}
 
 \subsection{Comments}
 Nobby also converts \LaTeX comments to HTML. You cannot see those
