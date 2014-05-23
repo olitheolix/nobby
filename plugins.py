@@ -23,6 +23,7 @@ import IPython
 # will be consistent with LaTeX' internal one if no sectioning commands occur
 # inside environments included as SVG images.
 section_counters = {'s1': 0, 's2': 0, 's3': 0}
+theorem_counters = {}
 
 ipshell = IPython.embed
 
@@ -206,10 +207,28 @@ def textbackslash(nodes, parent):
 
 
 def theorem(nodes, parent):
-    # Start of theorem.
-    ret = '<p><div><b>Theorem</b>: '
+    # Start of theorem environment. Infer environment name from the node
+    # because this plugin services all environments defined via the
+    # ``\newtheorem`` command.
+    env_name = parent.name.capitalize()
 
-    # Extract the optional theorem argument if present.
+    # Increment the counter for the current theorem environment. The counters
+    # are not shared among different theorem environments, ie. 'lemma',
+    # 'theorem', 'example', etc all have their own.
+    if env_name not in theorem_counters:
+        theorem_counters[env_name] = 0
+    theorem_counters[env_name] += 1
+
+    # Add the count to the displayed environment name to obtain eg. 'Lemma 3'.
+    env_name += ' {}'.format(theorem_counters[env_name])
+    
+    # Theorems get their own paragraph. The eg 'Lemma 3' name is in bold.
+    ret = '<p><div><b>' + env_name + '</b>: '
+
+    # Extract the optional theorem argument if present. Optional arguments
+    # are enclosed inside square brackets, which Nobby treats as normal text
+    # (unlike curly braces). Therefore, use a regular expression to identify
+    # the argument.
     if (len(nodes) > 0):
         m = re.match(r'^\[(.*?)\]', nodes[0].body)
         if m is not None:
@@ -263,7 +282,11 @@ plugins = {
     'subsection*': subsection_star,
     'subsubsection': subsubsection,
     'subsubsection*': subsubsection_star,
+    'lemma': theorem,
     'theorem': theorem,
+    'example': theorem,
+    'corollary': theorem,
+    'definition': theorem,
     'textbackslash': textbackslash,
     'textbf': textbf,
     'texttt': texttt,
