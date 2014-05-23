@@ -579,14 +579,14 @@ class TreeNode():
     Every node also has a span to identify the text portion in the original
     LaTeX document. This field is as yet unused.
     """
-    def __init__(self, parent, type, name=None):
+    def __init__(self, parent, ntype, span, name):
         self.parent = parent
 
         # One of 'text', 'env', 'macro', 'comment' and few more.
-        self.type = type
+        self.type = ntype
 
         # The span in the original LaTeX document.
-        self.span = None
+        self.span = span
 
         # Contains the LaTeX code *without* the delimiter strings (eg. '{')
         self.body = None
@@ -766,8 +766,7 @@ def buildTree(body, delim_list):
     """
     # Create the root node of the tree. It contains the entire document, has
     # not type- and parent, and spans the entire document.
-    root = TreeNode(None, 'text')
-    root.span = (0, len(body))
+    root = TreeNode(None, 'text', (0, len(body)), None)
     root.body = body
 
     # Pointer to current node. The logic below will update it as the tree
@@ -783,8 +782,7 @@ def buildTree(body, delim_list):
             #
             # Create a new node, populate it with the available information,
             # and install it as another child.
-            new_node = TreeNode(cur_node, delim.type, delim.name)
-            new_node.span = delim.span
+            new_node = TreeNode(cur_node, delim.type, delim.span, delim.name)
             cur_node.kids.append(new_node)
 
             # Descend into the node.
@@ -820,14 +818,12 @@ def buildTree(body, delim_list):
             # take care of it.
 
             # Create the macro node. It has no body, only a name.
-            new_node = TreeNode(cur_node, delim.type, delim.name)
-            start, stop = delim.span
-            new_node.span = (start, stop)
+            new_node = TreeNode(cur_node, delim.type, delim.span, delim.name)
             new_node.body = ''
 
             # Install the node as a new kid.
             cur_node.kids.append(new_node)
-            del start, stop, new_node
+            del new_node
         else:
             # This should not happen.
             print('Bug')
@@ -978,9 +974,8 @@ def convertTreeToHTML(node, frag_list, counters, plugins):
                 # brace environment, which means the two nodes can be merged
                 # into a single double brace environment.
                 child.type = '{{'
-                tmp = TreeNode(node, '{{')
+                tmp = TreeNode(node, '{{', child.span, None)
                 tmp.body = child.kids[0].body
-                tmp.span = child.span
 
                 # Double brace environments become fragments by definition.
                 html += createFragmentDescriptor(tmp, frag_list, counters)
@@ -995,10 +990,10 @@ def convertTreeToHTML(node, frag_list, counters, plugins):
         elif (child.type == 'macro') and (child.name == '\\'):
             # Replace any LaTeX newline command (ie. '\\') with a text node
             # that contains the r'\\' string. This cannot be done earlier,
-            # because everything starts with a backslash would otherwise have
+            # because everything starting with a backslash would otherwise have
             # been identified as a macro.
             old = node.kids.pop(child_idx)
-            new_node = TreeNode(node, 'text')
+            new_node = TreeNode(node, 'text', old.span, old.name)
             new_node.body = '\\\\'
             node.kids.insert(child_idx, new_node)
             html += '<p>'
@@ -1096,8 +1091,7 @@ def runPlugin(func, node):
                 continue
 
             # Create a text node.
-            ret_nodes = TreeNode(node.parent, 'html')
-            ret_nodes.span = node.parent.span
+            ret_nodes = TreeNode(node.parent, 'html', node.parent.span, None)
             ret_nodes.body = nn
             out.append(ret_nodes)
         elif isinstance(nn, TreeNode):
