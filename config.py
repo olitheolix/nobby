@@ -79,20 +79,22 @@ benign_node_types = ['dollar1_', 'dollar2_', 'curly1', 'curly2', 'equation',
 # Verbosity level.
 verbose = False
 
-# If True, Nobby will open the created HTML file in the default browser.
+# If True, Nobby will open the HTML file in the default browser.
 launch_browser = False
 
 # Number of LaTeX invocations per file.
 num_compile_iter = 1
 
-# Nobby will record all LaTeX counter values right before these
-# environments. If you have custom environments that alter any counters add it
-# to this list.
+# Nobby will record all LaTeX counter values right before these environments.
+# If you define/use additional environments that alter counters, add those
+# environments to the list.
 counter_dump_envs = ['align', 'equation', 'figure', 'table', 'subequations',
-                     'eqnarry', 'multiline', 'gather', 'flalign', 'alignat']
+                     'eqnarry', 'multiline', 'gather', 'flalign', 'alignat',
+                     'lemma', 'theorem', 'example', 'corollary', 'definition']
 
-# LaTeX counters to track. If you specify new theorem like environments with
-# '\newtheorem{foo}{Foo} then you must add 'foo' to the list. If you create
-# other counters that you want to track, add them here as well.
+# Nobby will track these LaTeX counters. If you specify new theorem like
+# environments with '\newtheorem{foo}{Foo} then you must add 'foo' to the
+# list. Add all additional counters you want to track to this list.
 counter_names = ('section', 'subsection', 'subsubsection',
-                 'equation', 'figure', 'table', 'footnote', 'theorem')
+                 'equation', 'figure', 'table', 'footnote',
+                 'lemma', 'theorem', 'example', 'corollary', 'definition')
