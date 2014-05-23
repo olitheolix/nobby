@@ -1965,12 +1965,18 @@ def compileWithCounters(preamble, body, path_names):
         out += '}'
         return out + m.group()
 
-    # Build a regular expression that matches any \begin{env} where 'env'
-    # is defined in the config file.
+    # Build a regular expression that matches any "\begin{env}" or "\macro"
+    # where the 'env'- and 'macro' values are defined in config file.
     envs = '|'.join(config.counter_dump_envs)
-    pat = re.compile(r'\\begin{(' + envs + ')}')
+    macros = '|'.join(config.counter_dump_macros)
+    pat1 = r'\\begin{(' + envs + ')}'
+    pat2 = r'\\(' + macros + ')(?![a-zA-Z*])'
+
+    # The final regular expression may look like this:
+    # (\\begin{(align|equation)}|\\(section|subsection)(?![a-zA-Z*]))
+    pat = re.compile('({}|{})'.format(pat1, pat2))
     body = pat.sub(repl, body)
-    del envs, pat
+    del envs, macros, pat
 
     # ----------------------------------------------------------------------
     # Complete the LaTeX file and compile it.
@@ -2233,6 +2239,7 @@ def main():
 
     # Add counter dumps to LaTeX file and recompile.
     counters = compileWithCounters(preamble, body, path_names)
+    config.counter_values = counters
     if config.verbose:
         print('Created counter dumps')
 
