@@ -243,6 +243,10 @@ def theorem(nodes, parent):
     return ret + '<blockquote><i>', nodes, '</i></blockquote></div><p>'
 
     
+def proof(nodes, parent):
+    return '<div><i>Proof: ', nodes, '</i></div><p>'
+
+    
 def url(nodes, parent):
     # Sanity check.
     assert len(nodes) > 0
@@ -286,6 +290,7 @@ plugins = {
     'example': theorem,
     'corollary': theorem,
     'definition': theorem,
+    'proof': proof,
     'textbackslash': textbackslash,
     'textbf': textbf,
     'texttt': texttt,

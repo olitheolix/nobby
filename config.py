@@ -90,15 +90,16 @@ num_compile_iter = 1
 # counters, add those environments/macros to the corresponding list.
 counter_dump_envs = ['align', 'equation', 'figure', 'table', 'subequations',
                      'eqnarry', 'multiline', 'gather', 'flalign', 'alignat',
-                     'lemma', 'theorem', 'example', 'corollary', 'definition']
+                     'lemma', 'theorem', 'example', 'corollary', 'definition',
+                     'proof']
 counter_dump_macros = ['section', 'subsection', 'subsubsection']
 
 # Nobby will track these LaTeX counters. If you specify new theorem like
 # environments with '\newtheorem{foo}{Foo} then you must add 'foo' to the
-# list. Add all additional counters you want to track to this list.
+# list. Augment the list with all additional counters you want Nobby to track.
 counter_names = ('section', 'subsection', 'subsubsection',
-                 'equation', 'figure', 'table', 'footnote',
-                 'lemma', 'theorem', 'example', 'corollary', 'definition')
+                 'equation', 'figure', 'table', 'footnote', 'lemma',
+                 'theorem', 'example', 'corollary', 'definition') 
 
 # Serves as a global variable for the parsed .nobby file. It will be a list of
 # named tuples that specify locations in the source code along with a
