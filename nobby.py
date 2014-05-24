@@ -901,8 +901,7 @@ def convertTreeToHTML(node, frag_list, plugins):
     which a ``plugin`` exists. Plugins will do the conversion in that case
     (see :func:`runPlugin` for details).
 
-    The elements in ``frag_list`` will later be compiled into SVG or PNG
-    images.
+    The elements in ``frag_list`` will later be compiled into SVG images.
 
     The ``plugins`` dictionary should be the same as the one passed to
     :func:`pruneDelimiters`.
@@ -1344,11 +1343,11 @@ def getCropBox(fname):
     return box
 
 
-def computeMargins(fname_png, cropBox):
+def computeMargins(fname_img, cropBox):
     """
     Return the PDF margins that would vertically center the \\\\rule block.
 
-    This function assumes the PNG image ``fname`` does indeed feature a
+    This function assumes the image in ``fname`` does indeed feature a
     \\\\rule block to the left. If not, the result is unspecified.
 
     The ``cropBox`` is a list of four floats that denote the PDF dimensions in
@@ -1361,13 +1360,13 @@ def computeMargins(fname_png, cropBox):
     on the respective side, in this order: [left, top, right, bottom]. This
     string can be passed directly to the `-margin` parameter of `pdfcrop`.
 
-    :param **str** fname: name of PNG file.
+    :param **str** fname: name of image file.
     :param **list** cropBox: dimensions of PDF (eg. [0.0, 0.0, 87.11, 13.41])
     :return: Margins (eg. '[1.0 2.0, 3.0, 4.0]')
     :rtype: **str**
     """
     # Load the image.
-    img = plt.imread(fname_png)
+    img = plt.imread(fname_img)
 
     # Grayscale images have only 2 dimensions, RGB(A) have a third to store the
     # colors. Remove them.
@@ -1521,10 +1520,13 @@ def compileFragmentToImage(arg_tuple):
         pass
 
     # Name of fragment file (must be in same directory as the original source
-    # code to ensure include statements access the correct files).
+    # code to ensure image include tags access the correct files).
     fname_tex = os.path.join(base_dir, frag_name + '.tex')
+
+    # Name for SVG- and alternative image name.
     fname_svg = os.path.join(target_dir, frag_name + '.svg')
-    fname_alt = os.path.join(target_dir, frag_name + '.png')
+    fname_alt = os.path.join(target_dir, frag_name + '.' +
+                             config.alt_image_format)
 
     # Do not compile already existing fragments.
     if config.skip_existing_fragments:
@@ -1532,6 +1534,11 @@ def compileFragmentToImage(arg_tuple):
             return
 
     # Names of auxiliary files (all reside in a dedicated build directory).
+    # Note that the crop file is always a PNG image, irrespective of the value
+    # `config.alt_image_format`. The reason is that PNG does not employ lossy
+    # image compression which and blurs the artificially added \rule block in
+    # the process. This make the identification of that block easier (see
+    # `computeMargins` function).
     tmp = os.path.join(build_dir, frag_name)
     fname_pdf = tmp + '.pdf'
     fname_crop = tmp + '_0_crop.pdf'
@@ -1617,12 +1624,14 @@ def compileFragmentToImage(arg_tuple):
         else:
             subprocess.check_output(('pdf2svg', fname_crop, fname_svg))
 
-        # Replace the SVG file with a PNG image, if the former is too large.
+        # Replace the SVG file with the alternative image format if it exceeds
+        # the max_svg_size threshold. However, only replace it if the
+        # alternative image is indeed smaller.
         if os.stat(fname_svg).st_size > config.max_svg_size:
             subprocess.check_output(('convert', '-density', '120',
                                      fname_crop, fname_alt))
 
-            # Only retain the PNG if it is really smaller than the SVG.
+            # Only retain the alternative image if it is smaller than the SVG.
             if os.stat(fname_svg).st_size > os.stat(fname_alt).st_size:
                 os.remove(fname_svg)
             else:
@@ -1666,7 +1675,7 @@ def compileFragmentToImage(arg_tuple):
 
 def processFragments(preamble, html, fragments, path):
     """
-    Convert all ``fragments`` to SVG or PNG and update ``html``.
+    Convert all ``fragments`` to SVG images and update ``html``.
 
     Every element in ``fragments`` contains a self contained LaTeX fragment,
     save the common ``preamble``. Those fragments were created in
@@ -1678,7 +1687,7 @@ def processFragments(preamble, html, fragments, path):
     thread if ``num_processes == 1`` (useful for debugging).
 
     :param *str* preamble: LaTeX preamble. Used to compile all fragments.
-    :param *str* html: HTML code. Images are without 'SVG' or 'PNG' suffix.
+    :param *str* html: HTML code. Images are without suffix (eg. no '.svg').
     :param *list* fragments: Contains self contained LaTeX code fragments.
     :param *tuple* path: the usual set of path names.
     :rtype *str*:
@@ -1728,24 +1737,25 @@ def processFragments(preamble, html, fragments, path):
 
     # -------------------------------------------------------------------------
     # The HTML code already contains the image tags and file names, but without
-    # extensions (ie. no 'PNG' or 'SVG'). Rectify.
+    # extensions (ie. no '.png' or '.svg'). Rectify.
     # -------------------------------------------------------------------------
     for frag in fragments:
         # Determine image file name without extension.
         placeholder = frag['placeholder']
         fname_ph = os.path.join(path.d_html, placeholder)
 
-        # Determine from the file system if the image is SVG or PNG.
+        # Determine from the file system if the image is SVG or the alternative
+        # image format (usually 'png' or 'jpg').
         if os.path.exists(fname_ph + '.svg'):
             ext = '.svg'
-        elif os.path.exists(fname_ph + '.png'):
-            ext = '.png'
+        elif os.path.exists(fname_ph + '.' + config.alt_image_format):
+            ext = '.' + config.alt_image_format
         else:
             print('Error: could not find fragment <{}>'.format(fname_ph))
             continue
 
         # Replace the original image name with the same one plus the correct
-        # {SVG, PNG} extension.
+        # image format extension (eg. 'png' or 'svg').
         html = html.replace(placeholder, placeholder + ext)
     return html
 
@@ -2269,7 +2279,7 @@ def main():
                 print('  {}: <{}>'.format(*_))
 
     # Compile all LaTeX fragments into SVG images and add the correct file
-    # extension (ie. 'PNG' or 'SVG') to all <img> tags in the HTML code.
+    # extension (eg. 'PNG' or 'SVG') to all <img> tags in the HTML code.
     html = processFragments(preamble, html, fragments, path_names)
 
     # Save the HTML file.

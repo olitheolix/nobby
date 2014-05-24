@@ -24,7 +24,12 @@ keep_builddir = False
 skip_existing_fragments = True
 
 # Maximum size of SVG image (in Bytes) before it will be converted to PNG.
-max_svg_size = 200000
+max_svg_size = 100000
+
+# Use the following format if the SVG file exceeds 'max_svg_size'. PNG is
+# usually a better choice because it supports transparency, but if your
+# page background is purely white, than JPG might give you smaller files.
+alt_image_format = 'png'
 
 # Display all environments that Nobby could not convert.
 show_unconverted_envs = True
