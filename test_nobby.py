@@ -38,6 +38,7 @@ convertTextToHTML = nobby.convertTextToHTML
 buildTree = nobby.buildTree
 splitLaTeXDocument = nobby.splitLaTeXDocument
 sanitisePreamble = nobby.sanitisePreamble
+sanitiseHTML = nobby.sanitiseHTML
 neutraliseLaTeXComments = nobby.neutraliseLaTeXComments
 
 
@@ -83,6 +84,44 @@ def test_sanitisePreamble():
     assert preamble == ('%\\documentclass[onepage,10pt]{article}\n'
                         '\\documentclass[onepage]{article}\n'
                         '%\\documentclass[onepage,12pt]{article}\n')
+
+
+def test_sanitiseHTML():
+    body = "a\nb"
+    out = sanitiseHTML(body)
+    assert out == 'a b'
+
+    body = "a \nb"
+    out = sanitiseHTML(body)
+    assert out == 'a  b'
+
+    body = "a\n b"
+    out = sanitiseHTML(body)
+    assert out == 'a  b'
+
+    body = "a\n\nb"
+    out = sanitiseHTML(body)
+    assert out == 'a\n\nb'
+
+    body = "a\n\n b"
+    out = sanitiseHTML(body)
+    assert out == 'a\n\n b'
+
+    body = "a \n\nb"
+    out = sanitiseHTML(body)
+    assert out == 'a \n\nb'
+
+    body = "a\n\n\nb"
+    out = sanitiseHTML(body)
+    assert out == 'a\n\nb'
+
+    body = "a\n\n\n\nb"
+    out = sanitiseHTML(body)
+    assert out == 'a\n\nb'
+
+    body = "a\n\n \n\nb"
+    out = sanitiseHTML(body)
+    assert out == 'a\n\nb'
 
 
 def test_neutraliseLaTeXComments():
@@ -768,7 +807,9 @@ def test_convertTextToHTML():
     out = convertTextToHTML(body)
     assert out == r'a &ldquo;b&rdquo; c'
 
+
 if __name__ == '__main__':
+    test_sanitiseHTML()
     test_convertTextToHTML()
     test_findComments()
     test_findBeginEnd()

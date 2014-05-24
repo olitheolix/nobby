@@ -888,6 +888,7 @@ def convertTextToHTML(body):
     # Replace quotes.
     body = body.replace("``", '&ldquo;')
     body = body.replace("''", '&rdquo;')
+
     return body
 
 
@@ -977,7 +978,7 @@ def convertTreeToHTML(node, frag_list, plugins):
             # Text node: add the node body to the HTML text and move
             # on. Convert empty lines into paragraphs first.
             tmp = convertTextToHTML(child.body)
-            html += re.sub(r'\n *?\n', '\n<p>\n', tmp, re.MULTILINE)
+            html += re.sub(r'\n *?\n', '<p>', tmp, re.MULTILINE)
             child_idx += 1
             del tmp
         elif child.type == '{':
@@ -1810,6 +1811,58 @@ def sanitisePreamble(preamble):
     return out
 
 
+def sanitiseHTML(html):
+    """
+    Remove whitespace in empty lines and remove normal linebreaks.
+
+    The purpose of removing whitespace in empty lines is cosmetic.
+
+    The normal linebreaks need to be removed because Wordpress has a habit of
+    otherwise enforcing them with <br> tags. I cannot think of a case where
+    this is desirable because the line breaks stem most likely from the LaTeX
+    code editor when it formatted the source code. From there it made its way
+    to the HTML code. I deem the removal of these linebreaks safe.
+
+    Example:
+
+    .. inline-python::
+
+        import pprint, nobby
+        html = 'a\\n\\n \\n\\nb'
+        out = sanitiseHTML(html)
+        pprint.pprint(out)
+
+    :param **str** html: HTML code.
+    :return: sane version of ``html`` without artificial line breaks.
+    :rtype: **str**
+    """
+    # Remove all whitespace from empty lines.
+    lines = [_ if len(_.strip()) > 0 else '' for _ in html.splitlines()]
+    html = '\n'.join(lines)
+
+    # ----------------------------------------------------------------------
+    # Replace all single '\n' characters with whitespace. Replace all
+    # sequences of '\n' with exactly two newlines.
+    # ----------------------------------------------------------------------
+    # Record the position of all '\n' sequences.
+    pos = []
+    for m in re.finditer(r'\n{2,}', html):
+        pos.append((m.span()[0], m.group()))
+
+    # Replace all newlines with whitespaces.
+    html = re.sub(r'\n', ' ', html)
+
+    # Re-insert the \n sequences. The net effect of this is that all single
+    # newlines are now whitespaces whereas all sequences of newlines (ie. to
+    # denote a paragraph) are preserved.
+    for (start, txt) in pos:
+        html = html[:start] + txt + html[start + len(txt):]
+
+    # Reduce the sequences to exactly 2 newline characters.
+    html = re.sub(r'\n{2,}', '\n\n', html)
+    return html
+
+
 def splitLaTeXDocument(document):
     """
     Return the preamble and document body of the LaTeX ``document``.
@@ -2270,8 +2323,7 @@ def main():
     # Convert the tree nodes into HTML code and a list of independent
     # fragments.
     fragments = []
-    html = createHTMLMetaInfo(title, author)
-    html += convertTreeToHTML(tree, fragments, plugins.plugins)
+    html = convertTreeToHTML(tree, fragments, plugins.plugins)
     if config.verbose:
         if len(no_plugins) > 0:
             print('Missing plugins for:')
@@ -2281,6 +2333,17 @@ def main():
     # Compile all LaTeX fragments into SVG images and add the correct file
     # extension (eg. 'PNG' or 'SVG') to all <img> tags in the HTML code.
     html = processFragments(preamble, html, fragments, path_names)
+
+    # Remove all artificial line breaks to prevent Wordpress from enforcing
+    # them.
+    html = sanitiseHTML(html)
+
+    # Insert line breaks around every paragraph to improve the readability of
+    # the HTML file.
+    html = re.sub(r'<p>', '\n\n<p>\n\n', html)
+
+    # Prefix the HTML code with the meta information from the LaTeX code.
+    html = createHTMLMetaInfo(title, author) + html
 
     # Save the HTML file.
     open(path_names.f_html, 'w').write(html)
