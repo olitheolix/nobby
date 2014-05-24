@@ -2109,32 +2109,32 @@ def parseCmdline():
 
     # Add the command line options.
     padd('--rebuild', '-r', action='store_true',
-         help='Rebuild all fragments images.')
+         help='Rebuild all fragments images')
     padd('--scale', '-s', type=float, metavar='S', default=config.pdf_scale,
-         help='Scale all images by a factor of "S" (a float, S>0).')
+         help='Scale all images by a factor of "S" (a float, S>0)')
     padd('--textwidth', type=float, metavar='W',
          default=config.textwidth_addon,
          help='Add \\addtolength{\\textwidth}{Wcm} to preamble')
-    padd('--max-svg-size', metavar='Bytes', type=int,
+    padd('--max-svg-size', metavar='N', type=int,
          default=config.max_svg_size,
-         help='Maximum size of SVG before it gets replaced with PNG')
+         help='Replace SVG with bitmap if it exceeds N bytes')
     padd('--no-env-warning', action='store_true',
-         help='Suppress warning about unknown environments.')
+         help='Suppress warning about unknown environments')
     padd('--keep-build-dir', '-k', action='store_true',
-         help='Do not delete the build directory.')
+         help='Do not delete the build directory')
     padd('-j', type=int, default=config.num_processes,
-         metavar='N', help='Number of concurrent compilation processes.')
+         metavar='N', help='Number of concurrent compilation processes')
     padd('-o', type=str, default=None,
-         metavar='dir', help='HTML output directory.')
+         metavar='dir', help='HTML output directory')
     padd('-v', action='store_true', default=config.verbose,
-         help='Verbose.')
+         help='Verbose')
     padd('-vv', action='store_true', default=config.errtex_showfull,
-         help='More Verbose.')
-    padd('-wb', action='store_true', default=False,
-         help='Open final HTML file in default browser.')
+         help='More Verbose')
+    padd('-w', action='store_true', default=False,
+         help='Open HTML file in browser')
     padd('--num-compile', default=config.num_compile_iter, metavar='N',
          type=int, help='Compile source file N times (default: N=3)')
-    padd('file', help='LaTeX file.')
+    padd('file', help='LaTeX file')
 
     # Let argparse parse the command line.
     args = parser.parse_args()
@@ -2160,7 +2160,7 @@ def parseCmdline():
     if args.vv:
         config.verbose = True
 
-    if args.wb:
+    if args.w:
         config.launch_browser = True
 
     # Quit the program if the input file does not exist.

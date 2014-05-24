@@ -133,7 +133,7 @@ To compile `demo.tex` and view the result in the browser:
 .. code-block:: bash
 
    git clone https://github.com/olitheolix/nobby.git
-   python3 nobby.py demo/demo.tex -wb
+   python3 nobby.py demo/demo.tex -w
 
 To publish it via Wordpress edit the demo/.credentials file to specify the
 Wordpress URL, username, password, SSH credentials, etc. Make sure you
