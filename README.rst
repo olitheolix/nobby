@@ -32,7 +32,7 @@ use the `subcaption` package to organise them, and reference them like
 in LaTeX. The strategy is *not* flexible enough to reproduce page
 layouts (eg. two-column) or fancy page headers.
 
-See `documentation <https://olitheolix.com/doc/nobby/>`_. for possible
+See `documentation <https://olitheolix.com/doc/nobby/>`_ for possible
 gotchas and more information.
 
 Nobby features a `plugin system
