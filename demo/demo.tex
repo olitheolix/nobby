@@ -51,12 +51,33 @@ citecolor=black, linkcolor=black]{hyperref}
 \begin{document}
 \maketitle
 
-\section{Outline}
-\label{sec:one}
-This file demonstrates some of the constructs Nobby can convert to
-HTML. Nobby relies on properly formatted \LaTeX code to do its work
-properly.
+\section{Convenience...}
+\ldots always wins. To keep \LaTeX files under version control and edit
+them in any editor is something I find convenient. On the other hand,
+I find it inconvenient to edit code in a browser and keep Wordpress
+posts under version control. Furthermore, converting \LaTeX code 
+to HTML is also inconvenient\ldots on a good day. But for technical
+articles I prefer \LaTeX over HTML any day.
 
+\emph{Nobby} and \emph{Nobby2WP} are my solutions to reclaim the
+convenience I desire. \emph{Nobby} converts \LaTeX articles to HTML
+and \emph{Nobby2WP} uploads them to a Wordpress server. Needless to
+say, I wrote this entire post in \LaTeX (the source code is
+\href{https://github.com/olitheolix/nobby/blob/master/demo/demo.tex}{here})
+and used \emph{Nobby} and \emph{Nobby2WP} to publish it.
+
+There is no one-size-fits-all with \LaTeX $\to $ HTML converters.
+Use the demonstrations below to determine if \emph{Nobby} suits your
+needs. Alternatively, or grab the source code from
+\href{https://github.com/olitheolix/nobby}{GitHub} and try it
+for yourself.
+
+\emph{Note:} I will not cover the \emph{Nobby2WP} program here. See
+the \href{https://github.com/olitheolix/nobby}{project description}
+for a brief example instead.
+
+\section{Formatting}
+\label{sec:one}
 Here is Pythagoras' theorem in an \emph{align} environment:
 \begin{align}
   \label{eq:pyth}
@@ -71,16 +92,21 @@ Similarly, Nobby also translate quotes: ``text in quotes'' and
 escaped \LaTeX symbols like ``\$'', ``\{``, ``\}'' and ``\%'' to
 proper HTML, ie. without the leading backslash.
 
+You can, of course, \emph{emphasise} something or make a
+\textbf{bold} statement.
 
-\subsection{More formatting}
-You can, of course, \emph{emphasise} something.
-
-Inline math expressions like $x=1$ or $e^{i\pi} + 1 = 0$ work fine.
+Inline math expressions like $x=1$ or $e^{i\pi} + 1 = 0$ work fine too.
 
 Here is some plain text. {{This sentence is actually an SVG image.}}
 
-The \texttt{\textbackslash{ldots}} command is often useful\ldots as is the
-\texttt{typewriter font}, or a \textbf{bold} statement.
+Many \LaTeX macros have equivalents in HTML, for instance
+\texttt{\textbackslash{ldots}}. Nobby features a plugin system to
+control the conversion. A default plugin for
+\texttt{\textbackslash{ldots}} already exists\ldots
+
+As with some macros, many \LaTeX fonts have HTML equivalents too. Once
+again it is up to plugins to create the correct HTML tags like
+the \texttt{typewriter font}, for instance.
 
 \subsection{Environments}
 Nobby does not know about \LaTeX macros or environments. It converts
@@ -105,7 +131,7 @@ demonstrate some of the default plugins.
   E = mc^2.
 \end{equation}
 
-\subsubsection{Theorem Envoronments}
+\subsubsection{Theorem Environments}
 The AMS package provides way to define theorem environments with
 \texttt{\textbackslash{newtheorem\{theorem\}\{Theorem\}}}. Nobby
 assumes that ``lemma'', ``theorem'', ``example'', ``corollary'' and
@@ -122,9 +148,9 @@ Wikipedia).
   \label{thm:div}
   Suppose $\mathcal{V}$ is a subset of $\mathbb{R}^n$ (in the case of
   $n=3$, $\mathcal{V}$ represents a volume in 3D space) which is
-  compact and has a piecewise smooth boundary $\mathcal{S}$ (also
+  compact and has a piece wise smooth boundary $\mathcal{S}$ (also
   indicated with $\partial\mathcal{V} = \mathcal{S}$). If $F$ is a
-  continuously differentiable vector field defined on a neighborhood
+  continuously differentiable vector field defined on a neighbourhood
   of $\mathcal{V}$, then we have
   \begin{align}
     \iiint_{\mathcal{V}} \nabla \cdot F(\mvec{v})\; \textnormal{d}\mvec{v}
@@ -156,7 +182,7 @@ following definition of the Laplacian is from
   \label{def:lap}
   The Laplace operator is a second order differential operator in the
   $n$-dimensional Euclidean space, defined as the divergence
-  ($\nabla\cdot$) of the gradient ($\nabla f$). Thus if $f$ is a
+  $(\nabla\cdot)$ of the gradient $(\nabla f)$. Thus if $f$ is a
   twice-differentiable real-valued function, then the Laplacian of $f$
   is defined by
   \begin{align}
@@ -204,7 +230,7 @@ comments because, well, they are comments, alright. To see them anyway
 switch to the source code view in your browser.
 % By the way, Nobby also converts LaTeX comments to HTML.
 
-\section{References}
+\section{Referencing}
 \label{sec:ref}
 Nobby supports references via the standard \texttt{\textbackslash{href}}
 command. This works for equations, sections, tables, figures, and
@@ -334,6 +360,4 @@ The following graph shows one of the
     \draw[dashed line] (beg_2) -- (dev_1);
     \draw[thick] (1,-1.5pt) -- (1,1.5pt) node[above] {$t$};
 \end{tikzpicture}
-
-The end.
 \end{document}
