@@ -1132,7 +1132,7 @@ def createFragmentDescriptor(child, frag_list):
     :param *str* fname_tex: name of LaTeX file (eg. 'my_file.tex').
     :param *str* build_dir: pdfLaTeX will put its output there.
     :return *str*: HTML image tag.
-    """    
+    """
     # Initialise the fragment data structure.
     cur_frag = {'name': child.type}
 

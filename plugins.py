@@ -65,9 +65,9 @@ def section(nodes, parent):
     label_name = nodes[0].body
 
     # LaTeX' Section counter. Add +1 because the Nobby recorded the counter
-    # value before the \section command. 
+    # value before the \section command.
     cnt = int(parent.counters['section']) + 1
-    
+
     # Create the heading with number and name (eg. '1 Introduction').
     enum = '{}  '.format(cnt)
     ret = '<h1>' + enum, nodes, '</h1>'
@@ -220,7 +220,7 @@ def theorem(nodes, parent):
 
     # Add the count to the displayed environment name to obtain eg. 'Lemma 3'.
     env_name += ' {}'.format(cnt)
-    
+
     # Theorems get their own paragraph. The eg 'Lemma 3' name is in bold.
     ret = '<p><div><b>' + env_name + '</b>: '
 
@@ -238,15 +238,15 @@ def theorem(nodes, parent):
             # Remove the span of the theorem name from the node body.
             _, stop = m.span()
             nodes[0].body = nodes[0].body[stop+2:]
-            
+
     # Put the theorem content itself into a blockquote environment.
     return ret + '<blockquote><i>', nodes, '</i></blockquote></div><p>'
 
-    
+
 def proof(nodes, parent):
     return '<div><i>Proof: ', nodes, '</i></div><p>'
 
-    
+
 def url(nodes, parent):
     # Sanity check.
     assert len(nodes) > 0

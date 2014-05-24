@@ -99,7 +99,7 @@ counter_dump_macros = ['section', 'subsection', 'subsubsection']
 # list. Augment the list with all additional counters you want Nobby to track.
 counter_names = ('section', 'subsection', 'subsubsection',
                  'equation', 'figure', 'table', 'footnote', 'lemma',
-                 'theorem', 'example', 'corollary', 'definition') 
+                 'theorem', 'example', 'corollary', 'definition')
 
 # Serves as a global variable for the parsed .nobby file. It will be a list of
 # named tuples that specify locations in the source code along with a
