@@ -2298,6 +2298,12 @@ def main():
         print(e)
         sys.exit(1)
 
+    # Put a copy of the compiled PDF file to the HTML directory, in case the
+    # HTML file wants to refer to the PDF version.
+    src = os.path.join(path_names.d_build, path_names.f_tex[:-3] + 'pdf')
+    dst = os.path.join(path_names.d_html, path_names.f_tex[:-3] + 'pdf')
+    shutil.copy(src, dst)
+
     # Split LaTeX code into body and preamble.
     stream = open(path_names.f_source, 'r').read()
     preamble, body = splitLaTeXDocument(stream)
