@@ -1240,14 +1240,24 @@ def runPDFLaTeX(build_dir: str, fname_tex: str):
         compile_path = './'
     os.chdir(compile_path)
 
+    if config.verbose:
+        print('Compiling <{}>'.format(fname_tex))
     try:
-        # Compile the LaTeX file.
-        args = ('-halt-on-error', '-interaction=nonstopmode',
-                '-output-directory=' + build_dir, compile_file)
-        if config.verbose:
-            print('Compiling <{}>'.format(fname_tex))
+        if config.use_latexmk:
+            # Compile the LaTeX file.
+            args = ('latexmk', '-quiet', '-output-directory=' + build_dir,
+                    '-pdf', ('-pdflatex=pdflatex -halt-on-error '
+                             '-interaction=nonstopmode'), compile_file)
+            num_compile_iter = 1
+        else:
+            # Compile the LaTeX file.
+            args = ('pdflatex', '-halt-on-error', '-interaction=nonstopmode',
+                    '-output-directory=' + build_dir, compile_file)
+            num_compile_iter = config.num_compile_iter
+
         for ii in range(config.num_compile_iter):
-            subprocess.check_output(('pdflatex',) + args)
+            subprocess.check_call(args, stdout=subprocess.DEVNULL,
+                                  stderr=subprocess.DEVNULL)
     except Exception as e:
         # Switch back to the original directory and propagate the error.
         os.chdir(cur_path)
@@ -2183,6 +2193,10 @@ def parseCmdline():
          help='Suppress warning about unknown environments')
     padd('--keep-build-dir', '-k', action='store_true',
          help='Do not delete the build directory')
+    padd('--num-compile', default=config.num_compile_iter, metavar='N',
+         type=int, help='Compile source file N times (default: N=3)')
+    padd('--use-latexmk', action='store_true', default=config.use_latexmk,
+         help='Use latexmk to determine number of compilations (slower)')
     padd('-j', type=int, default=config.num_processes,
          metavar='N', help='Number of concurrent compilation processes')
     padd('-o', type=str, default=None,
@@ -2193,8 +2207,6 @@ def parseCmdline():
          help='More Verbose')
     padd('-w', action='store_true', default=False,
          help='Open HTML file in browser')
-    padd('--num-compile', default=config.num_compile_iter, metavar='N',
-         type=int, help='Compile source file N times (default: N=3)')
     padd('file', help='LaTeX file')
 
     # Let argparse parse the command line.
@@ -2212,6 +2224,7 @@ def parseCmdline():
     config.errtex_showfull = args.vv
     config.html_dir = args.o
     config.num_compile_iter = args.num_compile
+    config.use_latexmk = args.use_latexmk
 
     # Sanity check.
     if args.num_compile < 1:

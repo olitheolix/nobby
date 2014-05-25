@@ -52,9 +52,6 @@ pdf_scale = 1.3
 # absolute image size of the created SVG image now depends on \textwidth.
 textwidth_addon = 0
 
-# Number of worker processes to compile fragments.
-num_processes = multiprocessing.cpu_count()
-
 # Format of LaTeX fragment placeholders. These will replace the LaTeX code
 # portion that will be compiled to an image. Once the image exists, proper
 # HTML tags will replace these strings.
@@ -87,8 +84,15 @@ verbose = False
 # If True, Nobby will open the HTML file in the default browser.
 launch_browser = False
 
-# Number of LaTeX invocations per file.
+# Number of worker processes to compile fragments.
+num_processes = multiprocessing.cpu_count()
+
+# Number of LaTeX invocations per file (only heeded when 'use_latexmk' is
+# False).
 num_compile_iter = 1
+
+# Use 'latexmk' to compile the LaTeX files the correct number of times.
+use_latexmk = False
 
 # Nobby will record all LaTeX counter values right before these environments
 # and macros. If you define/use additional environments/macros that alter
