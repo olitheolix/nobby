@@ -1821,7 +1821,7 @@ def sanitisePreamble(preamble):
     return out
 
 
-def sanitiseHTML(html):
+def prettifyHTML(html):
     """
     Remove whitespace in empty lines and remove normal linebreaks.
 
@@ -1839,7 +1839,7 @@ def sanitiseHTML(html):
 
         import pprint, nobby
         html = 'a\\n\\n \\n\\nb'
-        out = sanitiseHTML(html)
+        out = nobby.prettifyHTML(html)
         pprint.pprint(out)
 
     :param **str** html: HTML code.
@@ -2354,7 +2354,7 @@ def main():
 
     # Remove all artificial line breaks to prevent Wordpress from enforcing
     # them.
-    html = sanitiseHTML(html)
+    html = prettifyHTML(html)
 
     # Insert line breaks around every paragraph to improve the readability of
     # the HTML file.
