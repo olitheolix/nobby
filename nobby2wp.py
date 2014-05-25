@@ -172,15 +172,14 @@ def copyImageFiles(cred, path_html, wp_path_img, verbose=False):
     :param *bool* verbose: verbose output.
     :return: **None**
     """
-    # Create a temporary batch file for SFTP. All commands with a '-' prefix
-    # may silently fail without (an SFTP feature, not mine).
+    # Create a temporary batch file with SFTP commands. SFTP has a feature
+    # where all commands with a '-' prefix may silently fail.
     batch = tempfile.NamedTemporaryFile(mode='w', delete=True)
     batch.file.write('cd ' + cred['wp-path'] + '\n')
     batch.file.write('-mkdir ' + wp_path_img + '\n')
     batch.file.write('cd ' + wp_path_img + '\n')
     batch.file.write('lcd ' + "'" + path_html + "'" + '\n')
-    batch.file.write('-put *.svg\n')
-    batch.file.write('-put *.png\n')
+    batch.file.write('-put *\n')
     batch.file.write('bye\n')
 
     # We cannot close the file because that would delete it. Flush it instead
