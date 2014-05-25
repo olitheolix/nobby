@@ -2032,13 +2032,13 @@ def compileWithCounters(preamble, body, path_names):
         return out + m.group()
 
     # Build a regular expression that matches any "\begin{env}" or "\macro"
-    # where the 'env'- and 'macro' values are defined in config file.
+    # where the 'env'- and 'macro' values are defined in the config file.
     envs = '|'.join(config.counter_dump_envs)
     macros = '|'.join(config.counter_dump_macros)
     pat1 = r'\\begin{(' + envs + ')}'
     pat2 = r'\\(' + macros + ')(?![a-zA-Z*])'
 
-    # The final regular expression may look like this:
+    # The complete regular expression has this structure:
     # (\\begin{(align|equation)}|\\(section|subsection)(?![a-zA-Z*]))
     pat = re.compile('({}|{})'.format(pat1, pat2))
     body = pat.sub(repl, body)
@@ -2047,15 +2047,23 @@ def compileWithCounters(preamble, body, path_names):
     # ----------------------------------------------------------------------
     # Complete the LaTeX file and compile it.
     # ----------------------------------------------------------------------
-    tex = preamble + '\n\\begin{document}\n' + body
-    tex += '\n\n\closeoutputstream{nobby}\n\\end{document}\n'
-
     build_dir = path_names.d_build
     f_salted = '_nobby_counterdumps_' + path_names.f_tex
     p_salted = os.path.join(path_names.d_base, f_salted)
+
+    tex = preamble + '\n\\begin{document}\n' + body
+    tex += '\n\n\\closeoutputstream{nobby}\n\\end{document}\n'
     open(p_salted, 'w').write(tex)
-    runPDFLaTeX(build_dir, p_salted)
     del tex
+    try:
+        runPDFLaTeX(build_dir, p_salted)
+    except (subprocess.CalledProcessError, FileNotFoundError,
+            AssertionError) as e:
+        errmsg = ('Error: the salted document <{}> does not compile. This '
+                  'is probably a bug - Abort.')
+        print(errmsg.format(p_salted))
+        print(e)
+        sys.exit(1)
 
     # ----------------------------------------------------------------------
     # Parse the foo.nobby file. Each line has the same format, eg.
@@ -2280,24 +2288,15 @@ def main():
     path_names = definePathNames(fname_source)
 
     # Compile the original LaTeX document and abort if that fails.
-    errmsg = 'Error: original document <{}> does not compile - Abort.'
-    errmsg = errmsg.format(fname_source)
     try:
         config.tex_output = runPDFLaTeX(path_names.d_build, fname_source)
-        pass
-    except subprocess.CalledProcessError as e:
+    except (subprocess.CalledProcessError, FileNotFoundError,
+            AssertionError) as e:
+        errmsg = 'Error: the original document <{}> does not compile - Abort.'
+        errmsg = errmsg.format(fname_source)
         print(errmsg)
         print(e)
         sys.exit(1)
-    except FileNotFoundError as e:
-        print(errmsg)
-        print(e)
-        sys.exit(1)
-    except AssertionError as e:
-        print(errmsg)
-        print(e)
-        sys.exit(1)
-    del errmsg
 
     # Split LaTeX code into body and preamble.
     stream = open(path_names.f_source, 'r').read()
@@ -2306,7 +2305,7 @@ def main():
     # Add counter dumps to LaTeX file and recompile.
     config.counter_values = compileWithCounters(preamble, body, path_names)
     if config.verbose:
-        print('Created counter dumps')
+        print('Successfully extracted LaTeX counters.')
 
     # Obtain meta information like document- author and title.
     title, author = findLaTeXMetaInfo(preamble)
