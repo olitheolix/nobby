@@ -83,6 +83,7 @@ Nobby relies these external tools:
 * pdf2svg
 * pdfcrop
 * pdflatex
+* latexmk
 * convert (part of ImageMagick)
 
 To run Nobby2WP you will also need the `python-wordpress-xmlrpc` package.
@@ -93,8 +94,9 @@ Debian based systems like (K)Ubuntu
 
 .. code-block:: bash
 
-   sudo apt-get install python3-pytest python3-scipy python3-matplotlib pdf2svg
-   sudo apt-get install ipython3 python3-pip texlive-extra-utils imagemagick 
+   sudo apt-get install python3-pytest python3-scipy python3-matplotlib
+   sudo apt-get install pdf2svg ipython3 python3-pip
+   sudo apt-get install texlive-extra-utils latexmk imagemagick
    sudo pip3 install python-wordpress-xmlrpc
 
 
@@ -104,7 +106,8 @@ RedHat / Fedora
 .. code-block:: bash
 
   yum install python3-pytest python3-scipy python3-matplotlib pdf2svg
-  yum install python3-ipython python3-pip texlive texlive-pdfcrop ImageMagick 
+  yum install python3-ipython python3-pip texlive texlive-pdfcrop
+  yum install latexmk ImageMagick  
   pip-python3 install python-wordpress-xmlrpc
 
 
