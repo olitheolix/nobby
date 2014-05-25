@@ -46,7 +46,7 @@ ipshell = IPython.embed
 
 def updateImageTags(html, wp_path_img):
     """
-    Prefix all image paths in ``html`` with ``wp_path_img``.
+    Prefix all local image- and href paths in ``html`` with ``wp_path_img``.
 
     The purpose of this function is to update the local image paths to the ones
     on the Wordpress server. The local image paths created by Nobby are never
@@ -57,10 +57,17 @@ def updateImageTags(html, wp_path_img):
     :return: **None**
     """
     def repl(m):
-        tag_img, img_name, img_ext, _ = m.groups()
-        return tag_img + wp_path_img + img_name + img_ext
+        tag_img, img_name = m.groups()
+        return tag_img + wp_path_img + img_name
 
-    html = re.sub(r'(<img src=")(.*?)((svg|png)")', repl, html)
+    # Replace the image paths.
+    html = re.sub(r'(<img src=")(.*?")', repl, html)
+
+    # Replace the hyperref paths, but only those that start with './'. The
+    # author of the LaTeX code is responsible for putting this prefix in. Note
+    # that the prefix is irrelevant for images because only Nobby can actually
+    # add any images to the HTML file.
+    html = re.sub(r'(href=")\./(.*?")', repl, html)
     return html
 
 
