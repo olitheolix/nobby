@@ -123,8 +123,8 @@ def updatePost(cred, post_id, post_type, post_title, post_content):
 
             # Create an empty document in Wordpress and record its ID.
             post.id = wp_client.call(wpmethods.posts.NewPost(post))
-            msg = 'Created new {}\n  Title: {}\n  ID: {}'
-            msg = msg.format(post_type, post_title, post.id)
+            msg = 'Creating new {} on {}\n  Title: {}\n  ID: {}... '
+            msg = msg.format(post_type, cred['wp-url'], post_title, post.id)
         else:
             # Retrieve all posts and filter out the one with the correct ID.
             post = wp_client.call(
@@ -133,22 +133,24 @@ def updatePost(cred, post_id, post_type, post_title, post_content):
 
             # Sanity check: exit immediately if the post ID does not exist.
             if len(post) == 0:
-                msg = 'Post ID={} does not exist. Try deleting ".postid".'
-                print(msg.format(post_id))
+                msg = ('Post ID={} does not exist on host {}. Try deleting'
+                       ' ".postid".').format(post_id, cred['wp-url'])
+                print(msg)
                 sys.exit(1)
             else:
                 post = post[0]
-            msg = 'Updated existing {} (ID={})'.format(post_type, post_id)
+            msg = 'Updating existing {} (ID={}) on {}... '
+            msg = msg.format(post_type, post_id, cred['wp-url'])
 
         # Update the post publish it immediately.
         post.post_status = 'publish'
         if post_title is not None:
             post.title = post_title
         post.content = post_content
-        ret = wp_client.call(wpmethods.posts.EditPost(post.id, post))
 
-        # Print the status message and return the post ID.
-        print(msg)
+        print(msg, end='', flush=True)
+        ret = wp_client.call(wpmethods.posts.EditPost(post.id, post))
+        print('\r' + msg + ' done')
         return post.id
     except wprpc.exceptions.InvalidCredentialsError as e:
         print(e)
@@ -209,6 +211,7 @@ def copyImageFiles(cred, path_html, wp_path_img, verbose=False):
         stderr = subprocess.DEVNULL
 
     # Execute SFTP and let it read all commands from the temporary batch file.
+    print('Uploading files... ', end='', flush=True)
     try:
         pout = subprocess.check_output(cmd, stderr=stderr)
     except subprocess.CalledProcessError as e:
@@ -223,7 +226,7 @@ def copyImageFiles(cred, path_html, wp_path_img, verbose=False):
     # Then tell the user how many files were uploaded.
     pout = pout.decode('utf8')
     out = [_ for _ in pout.splitlines() if 'Uploading' in _]
-    print('Uploaded {} files'.format(len(out)))
+    print('\rUploaded {} files'.format(len(out)))
 
 
 class PostIDData():
@@ -590,9 +593,12 @@ def loadCredentials(cred_file):
         cred[key.lower()] = value.strip()
 
     # Sanity checks: the credentials file must contain these keys.
-    keys = ['ssh-login', 'ssh-key', 'ssh-port', 'wp-url', 'wp-user', 'wp-pass',
-            'wp-path', 'wp-img']
-    assert set(keys).issubset(set(cred.keys()))
+    keys = set(['ssh-login', 'ssh-key', 'ssh-port', 'wp-url', 'wp-user', 'wp-pass',
+            'wp-path', 'wp-img'])
+    if not keys.issubset(set(cred.keys())):
+        print('Credentials file <{}> misses these keys: {}'.format(
+            cred_file, keys - set(cred.keys())))
+        sys.exit(1)
     return cred
 
 
