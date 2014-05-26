@@ -1712,8 +1712,9 @@ def processFragments(preamble, html, fragments, path):
            for frag in fragments)
 
     # Compile every fragment.
-    msg = 'Compiling {} fragments in {} processes'
-    print(msg.format(len(fragments), config.num_processes))
+    msg = 'Compiling {} fragments in {} processes: '
+    msg = msg.format(len(fragments), config.num_processes)
+    print(msg, end='', flush=True)
     if config.num_processes == 1:
         # Run compilation in this very thread.
         for desc in gen:
@@ -1726,19 +1727,13 @@ def processFragments(preamble, html, fragments, path):
             else:
                 t0 = time.time()
                 tot = len(fragments)
-                sys.stdout.write('  Progress: ')
-                sys.stdout.flush()
-                per = ''
                 proc = pool.imap_unordered(compileFragmentToImage, gen)
                 for cnt, _ in enumerate(proc):
                     # Delete the previous percentage value and replace
                     # it with the new one.
-                    sys.stdout.write('\b' * len(per))
                     per = '{}%'.format(int(100 * cnt / tot))
-                    sys.stdout.write(per)
-                    sys.stdout.flush()
-                sys.stdout.write('\b' * len(per))
-                print('done ({}s)'.format(int(time.time() - t0)))
+                    print('\r' + msg + per, end='', flush=True)
+                print('\r' + msg + 'ok ({}s)'.format(int(time.time() - t0)))
                 del t0, tot, per
     del gen
 
@@ -2293,14 +2288,15 @@ def main():
     fname_source = parseCmdline()
 
     # Ensure all dependencies are met.
+    print('Dependency check: ', end='', flush=True)
     checkDependencies()
-    if config.verbose:
-        print('Passed dependency checks')
+    print('\rDependency check: ok')
 
     # Determine all path- and file names Nobby needs in due course.
     path_names = definePathNames(fname_source)
 
     # Compile the original LaTeX document and abort if that fails.
+    print('Compile original: ', end='', flush=True)
     try:
         config.tex_output = runPDFLaTeX(path_names.d_build, fname_source)
     except (subprocess.CalledProcessError, FileNotFoundError,
@@ -2310,6 +2306,7 @@ def main():
         print(errmsg)
         print(e)
         sys.exit(1)
+    print('\rCompile original: ok')
 
     # Put a copy of the compiled PDF file to the HTML directory, in case the
     # HTML file wants to refer to the PDF version.
@@ -2322,13 +2319,14 @@ def main():
     preamble, body = splitLaTeXDocument(stream)
 
     # Add counter dumps to LaTeX file and recompile.
+    print('Extract counters: ', end='', flush=True)
     config.counter_values = compileWithCounters(preamble, body, path_names)
-    if config.verbose:
-        print('Successfully extracted LaTeX counters.')
+    print('\rExtract counters: ok')
 
     # Obtain meta information like document- author and title.
     title, author = findLaTeXMetaInfo(preamble)
 
+    print('Generate tree: ', end='', flush=True)
     # Find all LaTeX environment delimiters known to Nobby (eg. '$',
     # '\begin{}', etc) and prune it to remove nested environments.
     delim_list = findDelimiters(body)
@@ -2337,11 +2335,15 @@ def main():
     # Convert the LaTeX code into a tree based on the position of the
     # environment delimiters from the previous step.
     tree = buildTree(body, delim_list)
+    print('\rGenerate tree: ok')
 
+    print('Convert tree: ', end='', flush=True)
     # Convert the tree nodes into HTML code and a list of independent
     # fragments.
     fragments = []
     html = convertTreeToHTML(tree, fragments, plugins.plugins)
+    print('\rConvert tree: ok')
+
     if config.verbose:
         if len(no_plugins) > 0:
             print('Missing plugins for:')
