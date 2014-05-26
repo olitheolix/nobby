@@ -593,8 +593,8 @@ def loadCredentials(cred_file):
         cred[key.lower()] = value.strip()
 
     # Sanity checks: the credentials file must contain these keys.
-    keys = set(['ssh-login', 'ssh-key', 'ssh-port', 'wp-url', 'wp-user', 'wp-pass',
-            'wp-path', 'wp-img'])
+    keys = set(['ssh-login', 'ssh-key', 'ssh-port', 'wp-url', 'wp-user',
+                'wp-pass', 'wp-path', 'wp-img'])
     if not keys.issubset(set(cred.keys())):
         print('Credentials file <{}> misses these keys: {}'.format(
             cred_file, keys - set(cred.keys())))
