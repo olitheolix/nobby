@@ -2166,7 +2166,7 @@ def parseCmdline():
     # Instantiate parser and add program description.
     parser = argparse.ArgumentParser(
         description=('Convert LaTeX document to HTML and SVG images.\n'
-                     'NOBBY 1.2 (GPL v3) Copyright (c) 2014 by Oliver Nagy\n'
+                     'NOBBY 1.3 (GPL v3) Copyright (c) 2014 by Oliver Nagy\n'
                      'Documentation: https://olitheolix.com/doc/nobby/'),
         formatter_class=argparse.RawTextHelpFormatter)
 
