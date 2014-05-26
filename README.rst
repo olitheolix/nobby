@@ -5,16 +5,18 @@ Nobby
 Nobby converts a LaTeX file into a single HTML file + SVG images.
 Nobby2WP uploads the HTML file + SVG images to a Wordpress server.
 
-The main purpose of these two tools is to keep the LaTeX files under
-version control, instead of the entire Wordpress installation, and
-conveniently publish/update the content via the command line.
+The main purpose of these two tools is to only keep LaTeX files under
+version control, not an entire Wordpress installation.
 
 Nobby uses SVG images to facilitate seamless scaling of all equations
-and text.
+and text. See `here <https://olitheolix.com/?page_id=20>`_ for a live
+demonstration of the converted `demo.tex
+<https://github.com/olitheolix/nobby/blob/master/demo/demo.tex>`_ file
+looks on a Wordpress site.
 
 If you want to write web articles in LaTeX then Nobby may be for
-you. If you are looking for a way to convert your PhD thesis to
-HTML then... maybe not, but feel free to try anyway!
+you. If you are looking for a way to convert your PhD thesis
+to HTML then... maybe not, but feel free to try anyway!
 
 
 More Information
