@@ -222,7 +222,7 @@ def theorem(nodes, parent):
     env_name += ' {}'.format(cnt)
 
     # Theorems get their own paragraph. The eg 'Lemma 3' name is in bold.
-    ret = '<p><div><b>' + env_name + '</b>: '
+    ret = '<p><div><blockquote><b>' + env_name + '</b>: '
 
     # Extract the optional theorem argument if present. Optional arguments
     # are enclosed inside square brackets, which Nobby treats as normal text
@@ -240,7 +240,7 @@ def theorem(nodes, parent):
             nodes[0].body = nodes[0].body[stop+2:]
 
     # Put the theorem content itself into a blockquote environment.
-    return ret + '<blockquote><i>', nodes, '</i></blockquote></div><p>'
+    return ret + '<br><i>', nodes, '</i></blockquote></div><p>'
 
 
 def proof(nodes, parent):
