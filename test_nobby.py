@@ -717,7 +717,7 @@ def test_convertTreeToHTML_1():
     frags = []
     html = convertTreeToHTML(root, frags, {})
     assert len(frags) == 2
-    assert html == 'foo |curly2_-0| <p><div align="center">|blah-1|<p></div>'
+    assert html == 'foo |curly2_-0| <div align="center">|blah-1|</div>'
 
 
 def test_convertTreeToHTML_plugin_env():
