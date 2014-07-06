@@ -226,7 +226,7 @@ def copyImageFiles(cred, path_html, wp_path_img, verbose=False):
     # Then tell the user how many files were uploaded.
     pout = pout.decode('utf8')
     out = [_ for _ in pout.splitlines() if 'Uploading' in _]
-    print('\rUploaded {} files'.format(len(out)))
+    print('\rAll files uploaded.')
 
 
 class PostIDData():
@@ -462,7 +462,7 @@ def parseCmdline():
          help='Test SSH- and Wordpress credentials')
     padd('-v', action='store_true', default=False,
          help='Verbose.')
-    padd('file', nargs='?', help='HTML directory created by Nobby.')
+    padd('file', nargs='?', help='HTML file created by Nobby.')
 
     # Let argparse parse the command line.
     args = parser.parse_args()
