@@ -1275,7 +1275,12 @@ def runPDFLaTeX(build_dir: str, fname_tex: str):
         for name in ['log', 'aux', 'out']:
             # Build the file name and load it, if it exists.
             fname = os.path.join(build_dir, compile_file[:-3] + name)
-            aux_files[name] = open(fname, 'r').read()
+            try:
+                aux_files[name] = open(fname, 'r').read()
+            except UnicodeDecodeError as err:
+                aux_files[name] = open(fname, 'rb').read()
+                print('Warning: {}-file does not contain valid '
+                      'UTF8 characters.'.format(name))
     except FileNotFoundError as e:
         print('Error: could not open all auxiliary files')
         raise e
