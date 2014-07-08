@@ -188,6 +188,7 @@ def copyImageFiles(cred, path_html, wp_path_img, verbose=False):
     batch.file.write('-mkdir ' + wp_path_img + '\n')
     batch.file.write('cd ' + wp_path_img + '\n')
     batch.file.write('lcd ' + "'" + path_html + "'" + '\n')
+    batch.file.write('-rm *\n')
     batch.file.write('-put *\n')
     batch.file.write('bye\n')
 
