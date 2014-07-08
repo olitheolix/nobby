@@ -275,6 +275,7 @@ plugins = {
     'label': label,
     'ldots': ldots,
     'maketitle': ignore_macro_arg0,
+    'clearpage': ignore_macro_arg0,
     'newpage': newpage,
     'noindent': ignore_macro_arg0,
     'ref': ref,
