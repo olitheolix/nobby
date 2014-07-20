@@ -52,30 +52,29 @@ citecolor=black, linkcolor=black]{hyperref}
 \maketitle
 
 \section{Convenience\ldots}
-\ldots always wins. Writing techincal articles in \LaTeX, keeping them
-under version control, and editing them in any editor is
+\ldots always wins. Writing technical articles in \LaTeX, keeping them
+under version control, and editing them in your editor of choice is
 convenient. In contrast, editing code in a browser, writing technical
 articles in HTML, or keeping Wordpress under version control is not;
-at least for me. And converting \LaTeX  code to HTML is\ldots
-inconvenient; on a good day. Yet I prefer \LaTeX over HTML any day for
-technical articles.
+at least not for me. And converting \LaTeX  code to HTML is\ldots
+inconvenient on a good day.
 
-\emph{Nobby} and \emph{Nobby2WP} are my solutions to nurture my desire
-for convenience. \emph{Nobby} converts \LaTeX articles to HTML
+\emph{Nobby} and \emph{Nobby2WP} are my solutions to get the convenience I
+desire. \emph{Nobby} converts \LaTeX articles to HTML
 and \emph{Nobby2WP} uploads them to a Wordpress server. Needless to
 say I wrote this entire post in \LaTeX, used \emph{Nobby} to convert
-it to HTML, and \emph{Nobby2WP} to publish it. You can also inspect the
+it to HTML, and \emph{Nobby2WP} to publish it. Feel free to inspect the
 \href{https://github.com/olitheolix/nobby/blob/master/demo/demo.tex}{source
-code}) for this post, or read it as a  \href{./demo.pdf}{PDF}.
+code} for this post or read it in \href{./demo.pdf}{PDF} form.
 
 \emph{Disclaimer:} when it comes to \LaTeX $\to $ HTML converters no
 one-size fits all. Consider this post a demonstration of
-\emph{Nobby's} capabilities. For more information visit the
-\href{https://github.com/olitheolix/nobby}{project page} on GitHub or
-the \href{https://olitheolix.com/doc/nobby}{documentation}.
+\emph{Nobby's} abilities to help you decide if it can satisfy your needs. For
+more information visit the \href{https://github.com/olitheolix/nobby}{project
+  page} on GitHub or the \href{https://olitheolix.com/doc/nobby}{documentation}.
 
-\emph{Note:} This article does not cover the \emph{Nobby2WP}. See 
-the \href{https://github.com/olitheolix/nobby}{project description}
+\emph{Note:} This article does not cover \emph{Nobby2WP}. See 
+\href{https://github.com/olitheolix/nobby}{project description}
 for a brief example instead.
 
 \section{Formatting}
@@ -87,33 +86,38 @@ Here is Pythagoras' theorem in an \emph{align} environment:
 \end{align}
 Here it is again as an inline formula: $z = \sqrt{x^2 + y^2}$.
 
-Nobby automatically escapes the <> characters. It is therefore safe to
+Nobby automatically escapes the <> characters. You may therefore
 write <strong> or </strong> without accidentally inserting HTML tags.
-
-Similarly, Nobby also translate quotes: ``text in quotes'' and
-escaped \LaTeX symbols like ``\$'', ``\{``, ``\}'' and ``\%'' to
-proper HTML, ie. without the leading backslash.
+Furthermore, Nobby translate quotation characters (eg ``text in quotes'') and
+escaped \LaTeX symbols like ``\$'', ``\{``, ``\}'' and ``\%'' to proper HTML,
+ie without the leading backslash.
 
 You can, of course, \emph{emphasise} something or make a
-\textbf{bold} statement.
+\textbf{bold} statement by using the standard \LaTeX
+\texttt{\textbackslash{emph}} and \texttt{\textbackslash{textbf}} commands.
 
 Inline math expressions like $x=1$ or $e^{i\pi} + 1 = 0$ work fine too.
 
-Here is some plain text. {{This sentence is actually an SVG image.}}
+You can also force Nobby to render normal text via \LaTeX by putting it into
+double braces: {{This is actually an SVG image.}}
 
 Many \LaTeX macros have equivalents in HTML, for instance
 \texttt{\textbackslash{ldots}}. Nobby features a plugin system to
-control the conversion. A default plugin for
-\texttt{\textbackslash{ldots}} already exists\ldots
+control the macro conversion. In the case of \texttt{\textbackslash{ldots}}
+there is already a plugin\ldots which saves you from writing one yourself.
 
-As with some macros, many \LaTeX fonts have HTML equivalents too. Once
-again it is up to plugins to create the correct HTML tags like
-the \texttt{typewriter font}, for instance.
+Likewise, some \LaTeX fonts have HTML equivalents as well. Since font changes
+are also only macros the plugin system applies to them as well, for instance
+to produce the \texttt{typewriter font}.
 
 \subsection{Environments}
-Nobby does not know about \LaTeX macros or environments. It converts
-them to images unless a plugin exists for them. The following examples
-demonstrate some of the default plugins.
+Nobby knows how to recognise \LaTeX macros and environments, but not what they
+mean. Whenever it finds a macro or environment it looks for an associated
+plugin. If no such plugin exists then it passes the code verbatim to \LaTeX and
+inserts the result as an image into the HTML page.
+
+In this section I will demonstrate some of the default plugins for frequently
+used environments.
 
 \subsubsection{Itemize}
 \begin{itemize}
@@ -134,18 +138,18 @@ demonstrate some of the default plugins.
 \end{equation}
 
 \subsubsection{Theorem Environments}
-The AMS package provides way to define theorem environments with
+The AMS package provides a way to define theorem environments with
 \texttt{\textbackslash{newtheorem\{theorem\}\{Theorem\}}}. Nobby
 assumes that ``lemma'', ``theorem'', ``example'', ``corollary'' and
-``definition'' are defined the document preamble. The HTML conversion
+``definition'' are defined in the document preamble. The HTML conversion
 will fail if not.
 
-Nobby ships with a single plugin to handle all these theorem
+Nobby ships with a single plugin to handle all theorem
 environments. Here are some examples.
 
-Compare the quality of this version with the 
-\href{http://en.wikipedia.org/wiki/Divergence_theorem}{original} on
-Wikipedia).
+Here is a theorem from
+\href{http://en.wikipedia.org/wiki/Divergence_theorem}{Wikipedia} 
+(compare Nobby's and Wikipedia's version in terms of quality!).
 \begin{theorem}[Divergence Theorem]
   \label{thm:div}
   Suppose $\mathcal{V}$ is a subset of $\mathbb{R}^n$ (in the case of
@@ -160,7 +164,7 @@ Wikipedia).
   \end{align}
 \end{theorem}
 
-Another one from \href{http://en.wikipedia.org/wiki/Divergence}{Wikipedia}:
+A definition from \href{http://en.wikipedia.org/wiki/Divergence}{Wikipedia}:
 \begin{definition}[Divergence in Cartesian Coordinates]
   \label{def:div}
   Let $x, y, z$ be a system of Cartesian coordinates in 3-dimensional
@@ -176,10 +180,9 @@ Another one from \href{http://en.wikipedia.org/wiki/Divergence}{Wikipedia}:
 \end{definition}
 
 Here is yet another definition from Wikipedia to demonstrate the
-continuous enumeration of theorem environments and equations
-therein. The definition also references its own equations. The
-following definition of the Laplacian is from
-\href{http://en.wikipedia.org/wiki/Laplace_operator}{here}.
+continuous enumeration of environments and equations. Note that the definition
+references its own equations (the original is again from
+\href{http://en.wikipedia.org/wiki/Laplace_operator}{Wikipedia}).
 \begin{definition}[Laplace Operator]
   \label{def:lap}
   The Laplace operator is a second order differential operator in the
@@ -208,8 +211,9 @@ following definition of the Laplacian is from
   C^k(\Omega) \mapsto C^{k-2}(\Omega)$ for any open set $\Omega$.
 \end{definition}
 
-You can numerically reference Theorem \ref{thm:div}, Definition
-\ref{def:div} and Definition \ref{def:lap} as usual. Alternatively,
+You can reference Theorem \ref{thm:div}, Definition
+\ref{def:div} and Definition \ref{def:lap} with the usual
+\texttt{\textbackslash{ref}} macro. Alternatively,
 you may also reference them with the \texttt{\textbackslash{hyperref}}
 macro and link directly to the \hyperref[thm:div]{Divergence Theorem},
 the \hyperref[def:div]{Definition of Divergence}, or the
@@ -221,9 +225,9 @@ the \hyperref[def:div]{Definition of Divergence}, or the
 \end{theorem}
 \begin{proof}
   Suppose there were a largest integer $n\in\mathbb{N}$. Then it must
-  be true that $n > n'\;\forall n'\in\mathbb{N}$ yet $n' = n + 1$
-  is larger than $n$. This contradicts the supposition. There is hence
-  no largest integer.
+  be true that $n > n'$ for all $n'\in\mathbb{N}\setminus\{n\}$. However,
+  the choice $n' = n + 1$ is also an integer and larger than $n$. This
+  contradicts the assumption that $n$ is the largest integer.
 \end{proof}
 
 \subsection{Comments}
@@ -273,14 +277,15 @@ pleasing position, Nobby puts it right where it was defined.
   \end{tabular}
   \caption{Floating table}
 \end{table}
+\\
 
-A conventional figure environment that uses the
-\texttt{\textbackslash{subcaption}} package. The code and figures for
-the next example are from the
+Next is a figure environment that uses the \texttt{\textbackslash{subcaption}}
+package. The code for this example is from the
 \href{http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions}{Wikimedia}
 on \LaTeX. Note that the image is a PNG (hence the coarser appearance)
-because the inclusion of the three other images exceeds the image size
-threshold (you can adjust it in Nobby's \texttt{config.py} file).\\
+because it is too large to be included as an SVG. You can adjust this threshold
+in Nobby's \texttt{config.py} file or on the command line (see \emph{nobby -h}
+for help).\\
 \begin{figure}
   \centering
   \begin{subfigure}[b]{0.3\textwidth}
