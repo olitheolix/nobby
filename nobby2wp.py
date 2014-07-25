@@ -181,6 +181,9 @@ def copyImageFiles(cred, path_html, wp_path_img, verbose=False):
     :param *bool* verbose: verbose output.
     :return: **None**
     """
+    print('Uploading support files to {}:~/{}'.format(
+        cred['ssh-login'], wp_path_img))
+    
     # Create a temporary batch file with SFTP commands. SFTP has a feature
     # where all commands with a '-' prefix may silently fail.
     batch = tempfile.NamedTemporaryFile(mode='w', delete=True)
@@ -734,6 +737,11 @@ def main():
         print(e)
         sys.exit(1)
 
+    # If the .postid file does not yet contain an ID for this post then create
+    # a new (empty) post in Wordpress to obtain the next available post_id.
+    if post_id is None:
+        post_id = updatePost(cred, None, post_type, post_title, '')
+
     # The path for the SVG- and PNG images on the WP host depends on the MD5
     # hash of the post ID. This ID is already unique; the MD5 hash is thus only
     # for show :)
@@ -742,7 +750,7 @@ def main():
     del tmp
 
     # Update image paths to their new location on the Wordpress host.
-    tmp = cred['wp-url'] + '/' + wp_path_img + '/'
+    tmp = os.path.join(cred['wp-url'], wp_path_img)
     post_content = updateImageTags(html, tmp)
     del tmp
 
