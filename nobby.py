@@ -1453,6 +1453,10 @@ def computeMargins(fname_img, cropBox):
     # Compute the amount of PDF margin that corresponds to the block width.
     left = -blk_width * cb_width / img_width
 
+    # This is an empirical hack leads to better align the SVG images with the
+    # base line of the surrounding text.
+    top += 1
+
     # Convert the four margins to a single string with four floats.
     out = ['{0:.2f}'.format(_) for _ in (left, top, 0, bottom)]
     return ' '.join(out)
