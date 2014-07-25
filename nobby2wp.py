@@ -58,7 +58,7 @@ def updateImageTags(html, wp_path_img):
     """
     def repl(m):
         tag_img, img_name = m.groups()
-        return tag_img + wp_path_img + img_name
+        return tag_img + os.path.join(wp_path_img, img_name)
 
     # Replace the image paths.
     html = re.sub(r'(<img src=")(.*?")', repl, html)
@@ -461,7 +461,9 @@ def parseCmdline():
     padd('--postid', type=str, default='.postid', metavar='file',
          help='postid file (defaults to ".postid")')
     padd('--list-posts', action='store_true', default=False,
-         help='List the newest 40 posts on the selected host')
+         help='List the 40 newest posts on the selected host')
+    padd('--skip-img', action='store_true', default=False,
+         help='Do not upload any images')
     padd('--verify', action='store_true', default=False,
          help='Test SSH- and Wordpress credentials')
     padd('-v', action='store_true', default=False,
@@ -763,7 +765,8 @@ def main():
     post_id_data.save(cred['ssh-login'], post_type, post_id)
 
     # Copy all SVG and PNG images via SFTP to the Wordpress host.
-    copyImageFiles(cred, path_html, wp_path_img, param.v)
+    if not param.skip_img:
+        copyImageFiles(cred, path_html, wp_path_img, param.v)
 
 
 if __name__ == '__main__':
