@@ -57,11 +57,12 @@ def updateImageTags(html, wp_path_img):
     :return: **None**
     """
     def repl(m):
-        tag_img, img_name = m.groups()
-        return tag_img + os.path.join(wp_path_img, img_name)
+        tag, name = m.groups()
+        return tag + os.path.join(wp_path_img, name)
 
-    # Replace the image paths.
+    # Replace the paths.
     html = re.sub(r'(<img src=")(.*?")', repl, html)
+    html = re.sub(r'(<source src=")(.*?")', repl, html)
 
     # Replace the hyperref paths, but only those that start with './'. The
     # author of the LaTeX code is responsible for putting this prefix in. Note
