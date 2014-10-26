@@ -184,7 +184,7 @@ def copyImageFiles(cred, path_html, wp_path_img, verbose=False):
     """
     print('Uploading support files to {}:~/{}'.format(
         cred['ssh-login'], wp_path_img))
-    
+
     # Create a temporary batch file with SFTP commands. SFTP has a feature
     # where all commands with a '-' prefix may silently fail.
     batch = tempfile.NamedTemporaryFile(mode='w', delete=True)
@@ -728,9 +728,15 @@ def main():
         sys.exit(1)
     else:
         path_html, file_html = os.path.split(param.file)
+        if path_html == '':
+            path_html = './'
 
     # Load the HTML file.
     html, post_title = loadHTML(param.file)
+
+    # Override the post-title if one was specified on the command line.
+    if param.title is not None:
+        post_title = param.title
 
     post_id_data = PostIDData(param.postid)
     try:
