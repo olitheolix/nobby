@@ -15,7 +15,7 @@
 \usepackage{graphicx}
 
 % Nobby will copy the title and author as comments into the HTML file.
-\title{Nobby Demo}
+\title{Nobby}
 \author{Oliver Nagy (olitheolix@gmail.com)}
 
 % Define default theorem environments. If you define additiona onses,
@@ -37,7 +37,7 @@
 \usepackage{tikz}
 \usetikzlibrary{calc, through, arrows}
 \usepackage{subcaption}
-\usepackage[pdftex,bookmarks=true, pdftitle={Nobby Demo},
+\usepackage[pdftex,bookmarks=true, pdftitle={Nobby},
 pdfauthor={Oliver Nagy}, colorlinks=true,
 citecolor=black, linkcolor=black]{hyperref}
 
@@ -53,24 +53,25 @@ citecolor=black, linkcolor=black]{hyperref}
 
 \section*{Convenience\ldots}
 \ldots always wins. Writing technical articles in \LaTeX, keeping them
-under version control, and editing them in your editor of choice is
-convenient. In contrast, editing code in a browser, writing technical
+under version control, and editing them in your favourite editor is
+convenient, whereas editing code in a browser, writing technical
 articles in HTML, or keeping Wordpress under version control is not;
-at least not for me. And converting \LaTeX  code to HTML is\ldots
-inconvenient on a good day.
+at least not for me. And converting \LaTeX  code to HTML is
+inconvenient \ldots on a good day.
 
-\emph{Nobby} and \emph{Nobby2WP} are my solutions to get the convenience I
-desire. \emph{Nobby} converts \LaTeX articles to HTML
+\emph{Nobby} and \emph{Nobby2WP} are my tools to get that convenience.
+\emph{Nobby} converts \LaTeX articles to HTML
 and \emph{Nobby2WP} uploads them to a Wordpress server. Needless to
-say I wrote this entire post in \LaTeX, used \emph{Nobby} to convert
-it to HTML, and \emph{Nobby2WP} to publish it. Feel free to inspect the
+say I wrote this entire post in \LaTeX, used \emph{Nobby} for the
+HTML conversion, and published it with \emph{Nobby2WP} on this very page. Feel
+free to inspect the 
 \href{https://github.com/olitheolix/nobby/blob/master/demo/demo.tex}{source
 code} for this post or read it in \href{./demo.pdf}{PDF} form.
 
 \emph{Disclaimer:} when it comes to \LaTeX $\to $ HTML converters no
 one size fits all. Consider this post a demonstration of
 \emph{Nobby's} abilities to help you decide if it may be for you. If not,
-here are some alternatives:
+here are some alternatives you may want to consider:
 \href{http://lucatrevisan.wordpress.com/latex-to-wordpress/}{latex2wp},
 \href{http://physicspages.com/tag/latex2wp/}{Lyx2Wordpress},
 \href{http://www.latex2html.org/}{latex2html},
@@ -111,12 +112,13 @@ double braces: {{This is actually an SVG image.}}
 
 Many \LaTeX macros have equivalents in HTML, for instance
 \texttt{\textbackslash{ldots}}. Nobby features a plugin system to
-control the macro conversion. In the case of \texttt{\textbackslash{ldots}}
-there is already a plugin\ldots which saves you from writing one yourself.
+control the macro conversion. For instance, there is already a plugin for
+\texttt{\textbackslash{ldots}} so you can already use it\ldots no need to write
+it yourself.
 
 Likewise, some \LaTeX fonts have HTML equivalents as well. Since font changes
-are also only macros the plugin system applies to them as well, for instance
-to produce the \texttt{typewriter font}.
+in \LaTeX are also only macros Nobby's plugin system already covers them too,
+for instance to produce the \texttt{typewriter font}.
 
 \subsection{Environments}
 Nobby knows how to recognise \LaTeX macros and environments, but not what they
@@ -187,9 +189,9 @@ A definition from \href{http://en.wikipedia.org/wiki/Divergence}{Wikipedia}:
   \end{align}
 \end{definition}
 
-Here is yet another definition from Wikipedia to demonstrate the
-continuous enumeration of environments and equations. Note that the definition
-references its own equations (the original is again from
+Here is yet another definition from Wikipedia to demonstrate the continuous
+enumeration of environments and equations. Note that the definition references
+its own equations (the original is again from
 \href{http://en.wikipedia.org/wiki/Laplace_operator}{Wikipedia}).
 \begin{definition}[Laplace Operator]
   \label{def:lap}
@@ -273,8 +275,8 @@ works. For instance, you can link to the \hyperref[sec:ref]{main section}.
 Nobby also supports starred sections.
 
 \section{Figures and Tables}
-Here is a floating table. Whereas  \LaTeX would put it at a visually
-pleasing position, Nobby puts it right where it was defined.
+Here is a floating table. \LaTeX would put it at a visually
+pleasing position whereas Nobby puts it right where it was defined.
 \begin{table}
   \centering
   \begin{tabular}{c | c c c c}
@@ -291,9 +293,9 @@ Next is a figure environment that uses the \texttt{\textbackslash{subcaption}}
 package. The code for this example is from the
 \href{http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions}{Wikimedia}
 on \LaTeX. Note that the image is a PNG (hence the coarser appearance)
-because it is too large to be included as an SVG. You can adjust this threshold
-in Nobby's \texttt{config.py} file or on the command line (see \emph{nobby -h}
-for help).\\
+because Nobby determined that it is too large to be included as an SVG. You can
+adjust the threshold where Nobby's switches from SVG to PNG images in
+\texttt{config.py} file or on the command line (see \emph{nobby -h} for help).\\
 \begin{figure}
   \centering
   \begin{subfigure}[b]{0.3\textwidth}
@@ -328,10 +330,9 @@ figure caption increased (as expected).
 \end{figure}
 
 \section{TikZ Image}
-\emph{TikZ} is a popular \LaTeX package for technical drawings.
-The following graph shows one of the
-\href{http://www.texample.net/tikz/examples/j-curve}{publicly
-  available} examples.
+\emph{TikZ} is a popular \LaTeX package for technical drawings. Here is an
+\href{http://www.texample.net/tikz/examples/j-curve}{example from their
+  webpage}.
 \begin{tikzpicture}[
         %We set the scale and define some styles
         scale=1.5,
