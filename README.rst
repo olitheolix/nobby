@@ -9,13 +9,13 @@ The main purpose of these two tools is to only keep LaTeX files under
 version control, not an entire Wordpress installation.
 
 Nobby uses SVG images to facilitate seamless scaling of all equations
-and text. See `here <https://olitheolix.com/?page_id=20>`_ for a live
+and text. See `here <https://olitheolix.github.io/nobby/>`_ for a live
 demonstration of the converted `demo.tex
 <https://github.com/olitheolix/nobby/blob/master/demo/demo.tex>`_ file
 looks on a Wordpress site.
 
 If you want to write web articles in LaTeX then Nobby may be for
-you. If you are looking for a way to convert your PhD thesis
+you. If you are looking for a way to convert your thesis
 to HTML then... maybe not, but feel free to try anyway!
 
 
@@ -34,17 +34,16 @@ use the `subcaption` package to organise them, and reference them like
 in LaTeX. The strategy is *not* flexible enough to reproduce page
 layouts (eg. two-column) or fancy page headers.
 
-See `documentation <https://olitheolix.com/doc/nobby/>`_ for possible
-gotchas and more information.
+See documentation for possible gotchas and more information (you may have to
+build it first with `make html` in the `doc/` folder).
 
-Nobby features a `plugin system
-<https://olitheolix.com/doc/nobby/install.html>`_ to alter the HTML
+The documentation also explains the plugin system to alter the HTML
 conversion of individual macros and environments. Plugins can, for
 instance, convert ``\ldots`` to '...' and ``\section{}`` to the
 corresponding ``<h1>`` and ``</h1>`` tags.
 
-It *may* be possible to support bibliographies and
-table-of-contents. Patches welcome. 
+It *may* be possible to support bibliographies and table-of-contents. Patches
+welcome.
 
 
 Examples
@@ -54,21 +53,21 @@ To see all options type
 
 .. code-block:: bash
 
-  >> python3 nobby.py -h
+  >> python nobby.py -h
 
 Typically, you run Nobby like this:
 
 .. code-block:: bash
 
-  >> python3 nobby.py somefile.tex
+  >> python nobby.py somefile.tex
 
 or this:
 
 .. code-block:: bash
 
-  >> python3 nobby.py somefile.tex --scale 1.2
+  >> python nobby.py somefile.tex --scale 1.2
 
-The ``--scale`` argument... wait for it... scales all SVG images. This
+The ``--scale`` argument - wait for it - scales all SVG images. This
 is often necessary to match the font size in the SVG images to the
 HTML font size.
 
@@ -96,10 +95,8 @@ Debian based systems like (K)Ubuntu
 
 .. code-block:: bash
 
-   sudo apt-get install python3-pytest python3-scipy python3-matplotlib
-   sudo apt-get install pdf2svg ipython3 python3-pip
-   sudo apt-get install texlive-extra-utils latexmk imagemagick
-   sudo pip3 install python-wordpress-xmlrpc
+   apt install pdf2svg texlive-extra-utils latexmk imagemagick
+   pip install python-wordpress-xmlrpc
 
 
 RedHat / Fedora
@@ -107,10 +104,8 @@ RedHat / Fedora
 
 .. code-block:: bash
 
-  yum install python3-pytest python3-scipy python3-matplotlib pdf2svg
-  yum install python3-ipython python3-pip texlive texlive-pdfcrop
-  yum install latexmk ImageMagick  
-  pip-python3 install python-wordpress-xmlrpc
+  yum install pdf2svg texlive texlive-pdfcrop latexmk ImageMagick
+  pip install python-wordpress-xmlrpc
 
 
 Windows and OsX
@@ -138,7 +133,7 @@ To compile `demo.tex` and view the result in the browser:
 .. code-block:: bash
 
    git clone https://github.com/olitheolix/nobby.git
-   python3 nobby.py demo/demo.tex -w
+   python nobby.py demo/demo.tex -w
 
 To publish it via Wordpress edit the demo/.credentials file to specify the
 Wordpress URL, username, password, SSH credentials, etc. Make sure you
@@ -147,14 +142,14 @@ create the ``wp-img`` path (see comments).
 .. code-block:: bash
 
    cd demo
-   python3 ../nobby2wp.py --verify
+   python ../nobby2wp.py --verify
 
 If this succeeds then you can upload the post (as a Wordpress 'page')
 like this:
 
 .. code-block:: bash
 
-   python3 ../nobby2wp.py html-demo/demo.html --type page
+   python ../nobby2wp.py html-demo/demo.html --type page
 
 Login to your Wordpress site and verify that it has a new entry in the
 `Pages` tab.
@@ -163,9 +158,7 @@ Login to your Wordpress site and verify that it has a new entry in the
 Documentation
 =============
 
-The full documentation is available at https://olitheolix.com/doc/nobby/
-
-You may build the documentation youself with Sphinx:
+To build the documentation with Sphinx:
 
 .. code-block:: bash
 
