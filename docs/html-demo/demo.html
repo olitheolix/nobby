@@ -1,0 +1,196 @@
+---
+layout: default
+title: Nobby Demo
+---
+<!--
+     Converted with Nobby (https://olitheolix.com/doc/nobby/)
+     Title: Nobby
+     Author: Oliver Nagy (olitheolix@gmail.com)
+     Date: 18 Jun 2017
+   -->
+
+<p>
+
+<h1>Convenience...</h1> ... always wins. Writing technical articles in <img src="LaTeX-000000.svg" style="vertical-align: middle;">, keeping them under version control, and editing them in your favourite editor is convenient, whereas editing code in a browser, writing technical articles in HTML, or keeping Wordpress under version control is not; at least not for me. And converting <img src="LaTeX-000001.svg" style="vertical-align: middle;">  code to HTML is inconvenient ... on a good day.
+
+<p>
+
+<em>Nobby</em> and <em>Nobby2WP</em> are my tools to get that convenience. <em>Nobby</em> converts <img src="LaTeX-000002.svg" style="vertical-align: middle;"> articles to HTML and <em>Nobby2WP</em> uploads them to a Wordpress server. Needless to say I wrote this entire post in <img src="LaTeX-000003.svg" style="vertical-align: middle;">, used <em>Nobby</em> for the HTML conversion, and published it with <em>Nobby2WP</em> on this very page. Feel free to inspect the  <a href="https://github.com/olitheolix/nobby/blob/master/demo/demo.tex">source code</a> for this post or read it in <a href="./demo.pdf">PDF</a> form.
+
+<p>
+
+<em>Disclaimer:</em> when it comes to <img src="LaTeX-000004.svg" style="vertical-align: middle;"> <img src="dollar1_-000005.svg" style="vertical-align: middle;"> HTML converters no one size fits all. Consider this post a demonstration of <em>Nobby's</em> abilities to help you decide if it may be for you. If not, here are some alternatives you may want to consider: <a href="http://lucatrevisan.wordpress.com/latex-to-wordpress/">latex2wp</a>, <a href="http://physicspages.com/tag/latex2wp/">Lyx2Wordpress</a>, <a href="http://www.latex2html.org/">latex2html</a>, <a href="http://plastex.sourceforge.net/">PlasTeX</a> and <a href="http://www2.ph.ed.ac.uk/snuggletex/documentation/overview-and-features.html">SnuggleTeX</a>.
+
+<p>
+
+For more information about Nobby visit its <a href="https://github.com/olitheolix/nobby">GitHub page</a> or read the <a href="https://olitheolix.com/doc/nobby">documentation</a>.
+
+<p>
+
+<em>Note:</em> This article does not cover <em>Nobby2WP</em>. See  <a href="https://github.com/olitheolix/nobby">project description</a> for a brief example instead.
+
+<p>
+
+<h1>1  Formatting</h1> <a name="sec:one"></a> Here is Pythagoras' theorem in an <em>align</em> environment: <a name="eq:pyth"><div align="center"><img src="align-000006.svg" style="vertical-align: middle;"></div></a> Here it is again as an inline formula: <img src="dollar1_-000007.svg" style="vertical-align: middle;">.
+
+<p>
+
+Nobby automatically escapes the &lt;&gt; characters. You may therefore write &lt;strong&gt; or &lt;/strong&gt; without accidentally inserting HTML tags. Furthermore, Nobby translate quotation characters (eg &ldquo;text in quotes&rdquo;) and escaped <img src="LaTeX-000008.svg" style="vertical-align: middle;"> symbols like &ldquo;$&rdquo;, &ldquo;{&ldquo;, &ldquo;}&rdquo; and &ldquo;%&rdquo; to proper HTML, ie without the leading backslash.
+
+<p>
+
+You can, of course, <em>emphasise</em> something or make a <b>bold</b> statement by using the standard <img src="LaTeX-000009.svg" style="vertical-align: middle;"> <tt>\emph</tt> and <tt>\textbf</tt> commands.
+
+<p>
+
+Inline math expressions like <img src="dollar1_-000010.svg" style="vertical-align: middle;"> or <img src="dollar1_-000011.svg" style="vertical-align: middle;"> work fine too.
+
+<p>
+
+You can also force Nobby to render normal text via <img src="LaTeX-000012.svg" style="vertical-align: middle;"> by putting it into double braces: <img src="curly2_-000013.svg" style="vertical-align: middle;">
+
+<p>
+
+Many <img src="LaTeX-000014.svg" style="vertical-align: middle;"> macros have equivalents in HTML, for instance <tt>\ldots</tt>. Nobby features a plugin system to control the macro conversion. For instance, there is already a plugin for <tt>\ldots</tt> so you can already use it... no need to write it yourself.
+
+<p>
+
+Likewise, some <img src="LaTeX-000015.svg" style="vertical-align: middle;"> fonts have HTML equivalents as well. Since font changes in <img src="LaTeX-000016.svg" style="vertical-align: middle;"> are also only macros Nobby's plugin system already covers them too, for instance to produce the <tt>typewriter font</tt>.
+
+<p>
+
+<h2>1.1  Environments</h2> Nobby knows how to recognise <img src="LaTeX-000017.svg" style="vertical-align: middle;"> macros and environments, but not what they mean. Whenever it finds a macro or environment it looks for an associated plugin. If no such plugin exists then it passes the code verbatim to <img src="LaTeX-000018.svg" style="vertical-align: middle;"> and inserts the result as an image into the HTML page.
+
+<p>
+
+In this section I will demonstrate some of the default plugins for frequently used environments.
+
+<p>
+
+<h3>1.1.1  Itemize</h3> <ul> <li> Item 1 <li> Item 2 </ul>
+
+<p>
+
+<h3>1.1.2  Enumerate</h3> <ol> <li> Item 1 <li> Item 2 </ol>
+
+<p>
+
+<h3>1.1.3  Equation</h3> <a name="eq:rel"><div align="center"><img src="equation-000019.svg" style="vertical-align: middle;"></div></a>
+
+<p>
+
+<h3>1.1.4  Theorem Environments</h3> The AMS package provides a way to define theorem environments with <tt>\newtheorem{theorem}{Theorem}</tt>. Nobby assumes that &ldquo;lemma&rdquo;, &ldquo;theorem&rdquo;, &ldquo;example&rdquo;, &ldquo;corollary&rdquo; and &ldquo;definition&rdquo; are defined in the document preamble. The HTML conversion will fail if not.
+
+<p>
+
+Nobby ships with a single plugin to handle all theorem environments. Here are some examples.
+
+<p>
+
+Here is a theorem from <a href="http://en.wikipedia.org/wiki/Divergence_theorem">Wikipedia</a>  (compare Nobby's and Wikipedia's version in terms of quality!). 
+
+<p>
+
+<div><blockquote><b>Theorem 1</b>: Divergence Theorem<br><i> <a name="thm:div"></a>   Suppose <img src="dollar1_-000020.svg" style="vertical-align: middle;"> is a subset of <img src="dollar1_-000021.svg" style="vertical-align: middle;"> (in the case of   <img src="dollar1_-000022.svg" style="vertical-align: middle;">, <img src="dollar1_-000023.svg" style="vertical-align: middle;"> represents a volume in 3D space) which is   compact and has a piece wise smooth boundary <img src="dollar1_-000024.svg" style="vertical-align: middle;"> (also   indicated with <img src="dollar1_-000025.svg" style="vertical-align: middle;">). If <img src="dollar1_-000026.svg" style="vertical-align: middle;"> is a   continuously differentiable vector field defined on a neighbourhood   of <img src="dollar1_-000027.svg" style="vertical-align: middle;">, then we have   <div align="center"><img src="align-000028.svg" style="vertical-align: middle;"></div> </i></blockquote></div>
+
+<p>
+
+
+
+<p>
+
+A definition from <a href="http://en.wikipedia.org/wiki/Divergence">Wikipedia</a>: 
+
+<p>
+
+<div><blockquote><b>Definition 1</b>: Divergence in Cartesian Coordinates<br><i> <a name="def:div"></a>   Let <img src="dollar1_-000029.svg" style="vertical-align: middle;"> be a system of Cartesian coordinates in 3-dimensional   Euclidean space, and let <img src="dollar1_-000030.svg" style="vertical-align: middle;"> be the corresponding basis of unit   vectors. The divergence of a continuously differentiable vector   field <img src="dollar1_-000031.svg" style="vertical-align: middle;"> is equal to the scalar-valued function:   <div align="center"><img src="align-000032.svg" style="vertical-align: middle;"></div> </i></blockquote></div>
+
+<p>
+
+
+
+<p>
+
+Here is yet another definition from Wikipedia to demonstrate the continuous enumeration of environments and equations. Note that the definition references its own equations (the original is again from <a href="http://en.wikipedia.org/wiki/Laplace_operator">Wikipedia</a>). 
+
+<p>
+
+<div><blockquote><b>Definition 2</b>: Laplace Operator<br><i> <a name="def:lap"></a>   The Laplace operator is a second order differential operator in the   <img src="dollar1_-000033.svg" style="vertical-align: middle;">-dimensional Euclidean space, defined as the divergence   <img src="dollar1_-000034.svg" style="vertical-align: middle;"> of the gradient <img src="dollar1_-000035.svg" style="vertical-align: middle;">. Thus if <img src="dollar1_-000036.svg" style="vertical-align: middle;"> is a   twice-differentiable real-valued function, then the Laplacian of <img src="dollar1_-000037.svg" style="vertical-align: middle;">   is defined by   <a name="eq:lapdef1"><div align="center"><img src="align-000038.svg" style="vertical-align: middle;"></div></a>   where the latter notations derive from formally writing <img src="dollar1_-000039.svg" style="vertical-align: middle;">. Equivalently, the Laplacian   of <img src="dollar1_-000040.svg" style="vertical-align: middle;"> is the sum of all the unmixed second partial derivatives in the   Cartesian coordinates   <a name="eq:lapdef2"><div align="center"><img src="align-000041.svg" style="vertical-align: middle;"></div></a>   As a second-order differential operator, the Laplace operator maps   <img src="dollar1_-000042.svg" style="vertical-align: middle;">-functions to <img src="dollar1_-000043.svg" style="vertical-align: middle;">-functions for <img src="dollar1_-000044.svg" style="vertical-align: middle;">. The expression   (<a href="#eq:lapdef1">5</a>) (or equivalently (<a href="#eq:lapdef2">6</a>)) defines an   operator <img src="dollar1_-000045.svg" style="vertical-align: middle;">, or more generally an operator <img src="dollar1_-000046.svg" style="vertical-align: middle;"> for any open set <img src="dollar1_-000047.svg" style="vertical-align: middle;">. </i></blockquote></div>
+
+<p>
+
+
+
+<p>
+
+You can reference Theorem <a href="#thm:div">1</a>, Definition <a href="#def:div">1</a> and Definition <a href="#def:lap">2</a> with the usual <tt>\ref</tt> macro. Alternatively, you may also reference them with the <tt>\hyperref</tt> macro and link directly to the <a href="#thm:div">Divergence Theorem</a>, the <a href="#def:div">Definition of Divergence</a>, or the <a href="#def:div">Definition of the Laplacian</a>.
+
+<p>
+
+
+
+<p>
+
+<div><blockquote><b>Theorem 2</b>: <br><i>   <a name="thm:no_largest_int"></a>   There is no largest integer. </i></blockquote></div>
+
+<p>
+
+ <div><i>Proof:    Suppose there were a largest integer <img src="dollar1_-000048.svg" style="vertical-align: middle;">. Then it must   be true that <img src="dollar1_-000049.svg" style="vertical-align: middle;"> for all <img src="dollar1_-000050.svg" style="vertical-align: middle;">. However,   the choice <img src="dollar1_-000051.svg" style="vertical-align: middle;"> is also an integer and larger than <img src="dollar1_-000052.svg" style="vertical-align: middle;">. This   contradicts the assumption that <img src="dollar1_-000053.svg" style="vertical-align: middle;"> is the largest integer. </i></div>
+
+<p>
+
+
+
+<p>
+
+<h2>1.2  Comments</h2> Nobby also converts <img src="LaTeX-000054.svg" style="vertical-align: middle;"> comments to HTML. You cannot see those comments because, well, they are comments, alright. To see them anyway switch to the source code view in your browser. <!-- By the way, Nobby also converts LaTeX comments to HTML.-->
+
+<h1>2  Referencing</h1> <a name="sec:ref"></a> Nobby supports references via the standard <tt>\href</tt> command. This works for equations, sections, tables, figures, and more.
+
+<p>
+
+For instance, here is a numbered reference to Pythagoras' theorem (<a href="#eq:pyth">1</a>) and Einstein's famous formula (<a href="#eq:rel">2</a>).
+
+<p>
+
+You may also use the <tt>\hyperref</tt> command to create named links to reference the formulae of <a href="#eq:pyth">Pythagoras</a> and <a href="#eq:rel">Einstein</a>.
+
+<p>
+
+Next are some examples of referenced sections.
+
+<p>
+
+<h2>2.1  Sub-Section</h2> <a name="ss:1"></a> This is sub-Section <a href="#ss:1">2.1</a> inside Section <a href="#sec:ref">2</a>.
+
+<p>
+
+<h3>2.1.1  Sub-Sub-Section</h3> <a name="sss:1"></a> This is sub-sub-Section <a href="#sss:1">2.1.1</a> inside sub-Section <a href="#ss:1">2.1</a> and Section <a href="#sec:ref">2</a>. The <tt>\hyperref</tt> also works. For instance, you can link to the <a href="#sec:ref">main section</a>.
+
+<p>
+
+<h3>Starred Sub-Sub-Section</h3> Nobby also supports starred sections.
+
+<p>
+
+<h1>3  Figures and Tables</h1> Here is a floating table. <img src="LaTeX-000055.svg" style="vertical-align: middle;"> would put it at a visually pleasing position whereas Nobby puts it right where it was defined. <div align="center"><img src="table-000056.svg" style="vertical-align: middle;"></div> 
+
+<p>
+
+
+
+<p>
+
+Next is a figure environment that uses the <tt>\subcaption</tt> package. The code for this example is from the <a href="http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions">Wikimedia</a> on <img src="LaTeX-000057.svg" style="vertical-align: middle;">. Note that the image is a PNG (hence the coarser appearance) because Nobby determined that it is too large to be included as an SVG. You can adjust the threshold where Nobby's switches from SVG to PNG images in <tt>config.py</tt> file or on the command line (see <em>nobby -h</em> for help).
+
+<p>
+
+ <a name="fig:gull"><a name="fig:tiger"><a name="fig:mouse"><a name="fig:animals"><div align="center"><img src="figure-000058.png" style="vertical-align: middle;"></div></a></a></a></a>
+
+<p>
+
+Here is Figure <a href="#fig:gull">1a</a> by itself. Note that the counter in the figure caption increased (as expected). <a name="fig:gull_alone"><div align="center"><img src="figure-000059.png" style="vertical-align: middle;"></div></a>
+
+<p>
+
+<h1>4  TikZ Image</h1> <em>TikZ</em> is a popular <img src="LaTeX-000060.svg" style="vertical-align: middle;"> package for technical drawings. Here is an <a href="http://www.texample.net/tikz/examples/j-curve">example from their   webpage</a>. <div align="center"><img src="tikzpicture-000061.svg" style="vertical-align: middle;"></div>
