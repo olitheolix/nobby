@@ -1433,7 +1433,7 @@ def computeMargins(fname_img, cropBox):
     # vertically at half its width (determined just above), and look for the
     # index of the first/last black pixel in that column. The final values are
     # the distances from the top/bottom of the image.
-    tmp = img[:, blk_width // 2]
+    tmp = img[:, int(blk_width / 2)]
     idx = np.nonzero(tmp)[0]
     gap_top, gap_bottom = idx[0], img_height - 1 - idx[-1]
     del tmp, idx
