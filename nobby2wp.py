@@ -150,7 +150,6 @@ def updatePost(cred, post_id, post_type, post_title, post_content):
         post.content = post_content
 
         print(msg, end='', flush=True)
-        ret = wp_client.call(wpmethods.posts.EditPost(post.id, post))
         print('\r' + msg + ' done')
         return post.id
     except wprpc.exceptions.InvalidCredentialsError as e:
@@ -230,7 +229,6 @@ def copyImageFiles(cred, path_html, wp_path_img, verbose=False):
     # Decode the output and count how many 'Uploading' statements it contains.
     # Then tell the user how many files were uploaded.
     pout = pout.decode('utf8')
-    out = [_ for _ in pout.splitlines() if 'Uploading' in _]
     print('\rAll files uploaded.')
 
 
@@ -639,12 +637,11 @@ def verifyCredentials(cred):
     # ----------------------------------------------------------------------
     try:
         # Connect to Wordpress.
-        wp_client = wprpc.Client(cred['wp-url'] + '/xmlrpc.php',
-                                 cred['wp-user'], cred['wp-pass'])
+        wprpc.Client(cred['wp-url'] + '/xmlrpc.php',
+                     cred['wp-user'], cred['wp-pass'])
 
         # Query some posts (ignore result).
-        getPosts = wpmethods.posts.GetPosts
-        posts = wp_client.call(getPosts({'post_type': 'post'}))
+        wpmethods.posts.GetPosts
     except wprpc.exceptions.InvalidCredentialsError as e:
         # Print error message and complete set of credentials.
         print('Wordpress:  Error')
@@ -691,7 +688,7 @@ def verifyCredentials(cred):
 
     # Execute SFTP and let it read all commands from the temporary batch file.
     try:
-        pout = subprocess.check_output(cmd)
+        subprocess.check_output(cmd)
     except subprocess.CalledProcessError as e:
         print('SSH access: Failed')
         print('-' * 75)
