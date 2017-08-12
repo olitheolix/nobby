@@ -39,7 +39,8 @@ import subprocess
 import numpy as np
 import collections
 import multiprocessing
-import matplotlib.pyplot as plt
+import PIL.Image as Image
+
 
 ipshell = IPython.embed
 
@@ -1382,21 +1383,7 @@ def computeMargins(fname_img, cropBox):
     :rtype: **str**
     """
     # Load the image.
-    img = plt.imread(fname_img)
-
-    # Grayscale images have only 2 dimensions, RGB(A) have a third to store the
-    # colors. Remove them.
-    if img.ndim > 2:
-        # If there is an alpha channel, then remove it (ie. only retain the RGB
-        # components).
-        if img.shape[2] > 3:
-            img = img[:, :, :3]
-
-        # Convert to grayscale. The conversion need not be precise, because we
-        # are looking for a black square, and black is always zero (although we
-        # will allow for a small slack later on).
-        img = np.sum(img, axis=2)
-        img /= 3
+    img = np.array(Image.open(fname_img).convert('L'), np.float32) / 255
 
     # For convenience.
     img_height, img_width = img.shape
