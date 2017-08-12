@@ -1440,8 +1440,8 @@ def computeMargins(fname_img, cropBox):
     # Compute the amount of PDF margin that corresponds to the block width.
     left = -blk_width * cb_width / img_width
 
-    # This is an empirical hack leads to better align the SVG images with the
-    # base line of the surrounding text.
+    # This empirical hack may better align the SVG images with the base line of
+    # the surrounding text.
     top += 1
 
     # Convert the four margins to a single string with four floats.
@@ -1541,10 +1541,10 @@ def compileFragmentToImage(arg_tuple):
             return
 
     # Names of auxiliary files (all reside in a dedicated build directory).
-    # Note that the crop file is always a PNG image, irrespective of the value
-    # `config.alt_image_format`. The reason is that PNG does not employ lossy
-    # image compression which and blurs the artificially added \rule block in
-    # the process. This make the identification of that block easier (see
+    # Note that the cropped file is always a PNG image, irrespective of the
+    # value `config.alt_image_format`. The reason is that PNG does not employ
+    # lossy image compression which blurs the artificially added \rule block in
+    # the process. This makes the identification of that block easier (see
     # `computeMargins` function).
     tmp = os.path.join(build_dir, frag_name)
     fname_pdf = tmp + '.pdf'
@@ -1604,7 +1604,7 @@ def compileFragmentToImage(arg_tuple):
                 return None
 
             # Turn the PDF into a PNG and determine how much to crop/extend the
-            # margins to ensure the image is vertically centered.
+            # margins to ensure the image is vertically centred.
             check_output(('convert', fname_crop_aux, fname_crop_png))
             marg = computeMargins(fname_crop_png, cropBox)
             if marg is None:

@@ -60,8 +60,8 @@ ph_format = '{0}-{1:06d}'
 # Format of HTML image inclusion tags.
 tag_format = '<img src="{}" style="vertical-align: middle;">'
 
-# If True, then the full LaTeX code, including preamble and everything will be
-# listed, instead of only the source code fragment.
+# If True, then the full LaTeX code including preamble will be listed, instead
+# of only the source code fragment.
 errtex_showfull = False
 
 # An empty SVG file. This is sometimes necessary when the LaTeX does not
