@@ -62,7 +62,6 @@ def section_star(nodes, parent):
 
 def section(nodes, parent):
     assert len(nodes) > 0
-    label_name = nodes[0].body
 
     # LaTeX' Section counter. Add +1 because the Nobby recorded the counter
     # value before the \section command.
