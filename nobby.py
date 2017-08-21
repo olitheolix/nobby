@@ -1249,12 +1249,10 @@ def runPDFLaTeX(build_dir: str, fname_tex: str):
             args = ('latexmk', '-quiet', '-output-directory=' + build_dir,
                     '-pdf', ('-pdflatex=pdflatex -halt-on-error '
                              '-interaction=nonstopmode'), compile_file)
-            num_compile_iter = 1
         else:
             # Compile the LaTeX file.
             args = ('pdflatex', '-halt-on-error', '-interaction=nonstopmode',
                     '-output-directory=' + build_dir, compile_file)
-            num_compile_iter = config.num_compile_iter
 
         for ii in range(config.num_compile_iter):
             subprocess.check_call(args, stdout=subprocess.DEVNULL,
