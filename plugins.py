@@ -56,7 +56,7 @@ def chapter(nodes, parent):
 
 
 def section_star(nodes, parent):
-    ret = '<h1>', nodes, '</h1>'
+    ret = '<h1>', nodes, '</h1><p>'
     return ret
 
 
@@ -69,12 +69,12 @@ def section(nodes, parent):
 
     # Create the heading with number and name (eg. '1 Introduction').
     enum = '{}  '.format(cnt)
-    ret = '<h1>' + enum, nodes, '</h1>'
+    ret = '<h1>' + enum, nodes, '</h1><p>'
     return ret
 
 
 def subsection_star(nodes, parent):
-    ret = '<h2>', nodes, '</h2>'
+    ret = '<h2>', nodes, '</h2><p>'
     return ret
 
 
@@ -88,12 +88,12 @@ def subsection(nodes, parent):
 
     # Create the heading with number and name (eg. '1.1 Introduction').
     enum = '{}.{}  '.format(cnt_sec, cnt_subsec)
-    ret = '<h2>' + enum, nodes, '</h2>'
+    ret = '<h2>' + enum, nodes, '</h2><p>'
     return ret
 
 
 def subsubsection_star(nodes, parent):
-    ret = '<h3>', nodes, '</h3>'
+    ret = '<h3>', nodes, '</h3><p>'
     return ret
 
 
@@ -109,7 +109,7 @@ def subsubsection(nodes, parent):
     # Create the heading with number and name (eg. '1.1.1 Introduction').
     enum = '{}.{}.{}  '.format(cnt_sec, cnt_subsec, cnt_subsubsec)
 
-    ret = '<h3>' + enum, nodes, '</h3>'
+    ret = '<h3>' + enum, nodes, '</h3><p>'
     return ret
 
 
@@ -221,7 +221,7 @@ def theorem(nodes, parent):
     env_name += ' {}'.format(cnt)
 
     # Theorems get their own paragraph. The eg 'Lemma 3' name is in bold.
-    ret = '<p><div><blockquote><b>' + env_name + '</b>: '
+    ret = '<p><div><blockquote><p><b>' + env_name + '</b>: '
 
     # Extract the optional theorem argument if present. Optional arguments
     # are enclosed inside square brackets, which Nobby treats as normal text
@@ -243,7 +243,7 @@ def theorem(nodes, parent):
 
 
 def proof(nodes, parent):
-    return '<div><i>Proof: ', nodes, '</i></div><p>'
+    return '<div><p><i>Proof: ', nodes, '</i></div><p>'
 
 
 def url(nodes, parent):
