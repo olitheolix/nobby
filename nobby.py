@@ -1151,11 +1151,11 @@ def createFragmentDescriptor(child, frag_list):
     tag = tag.format(ph)
 
     # In the HTML code, place the image in a new paragraph if its source code
-    # constitutes an environment (ie. anythin between a '\begin' '\end' block
+    # constitutes an environment (ie. anything between a '\begin' '\end' block
     # in LaTeX). Do not add a paragraph anywhere else to facilitate inline
     # equations in the HTML output.
     if child.type == 'env':
-        tag = '<div align="center">' + tag + '</div>'
+        tag = '<div align="center">' + tag + '</div><p>'
         cur_frag['inline'] = False
     else:
         cur_frag['inline'] = True

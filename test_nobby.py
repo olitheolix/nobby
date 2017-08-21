@@ -692,7 +692,7 @@ class TestNobby():
         frags = []
         html = convertTreeToHTML(root, frags, {})
         assert len(frags) == 2
-        assert html == 'foo |curly2_-0| <div align="center">|blah-1|</div>'
+        assert html == 'foo |curly2_-0| <div align="center">|blah-1|</div><p>'
 
     def test_convertTreeToHTML_plugin_env(self):
         def c_itemize(nodes, parent):
